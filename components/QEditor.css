@@ -1,0 +1,17 @@
+
+.editor-container {
+    background-color: #ffffff; 
+    border-radius: 8px;
+    color: #000000;
+    margin-bottom: 20px;
+    width: 350px;
+  }
+  
+  .ql-editor {
+    background-color: inherit; /* the editor content gets the same background color as the container */
+    padding: 10px;
+
+  }
+
+  
+

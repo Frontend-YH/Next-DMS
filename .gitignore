@@ -1,0 +1,20 @@
+node_modules/
+.next/
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Ignore log files and backup files
+*.log
+*.bak
+*.swp
+
+# Ignore IDE/editor-specific files or directories
+.vscode/
+.idea/
+
+
+https://box102.eucloud.host:2083/cpsess1713925094/frontend/jupiter/sql/PhpMyAdmin.html
+
+https://meet.google.com/zwj-kkpn-xad?authuser=0&hs=179
