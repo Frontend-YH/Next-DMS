@@ -176,7 +176,7 @@ function Dms() {
 
   return (  <Main>
             
-            <div style={documentList}>
+            <div className='bg-blue-500 text-white p-4 rounded-lg shadow-md'>
             {posts ? (
             <ul style={documentUl}>
             {reversedDocs.map((post)=>(

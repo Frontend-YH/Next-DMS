@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <header className="header">
-        <Link href="/"><h1>J-DMS</h1></Link><br/>
+        <Link href="/"><h1>Next DMS</h1></Link><br/>
         <Link href="/add-post"><button style={createDocumentBtn}>Create New Document</button></Link>
         <Link href="/"><button style={createDocumentBtn}>List Documents</button></Link>
     </header>

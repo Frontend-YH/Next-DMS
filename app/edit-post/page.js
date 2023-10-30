@@ -174,7 +174,7 @@ const documentPreviewBtn = {
     color: "#ffffff",
     border: "0px",
     borderRadius: "6px",
-    width: "120px",
+    width: "130px",
     height: "36px",
     padding: "10px",
     cursor: "pointer"
@@ -202,7 +202,7 @@ const documentPreviewBtn = {
     color: "#ffffff",
     border: "0px",
     borderRadius: "6px",
-    width: "120px",
+    width: "130px",
     height: "36px",
     padding: "10px",
     cursor: "pointer"
