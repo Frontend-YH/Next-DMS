@@ -6,17 +6,24 @@ import { format } from "date-fns";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
+  const [categoryPosts, SetCategotyPosts]=useState([])
 
   const router = useRouter();
 
   useEffect(() => {
     const getPost = async () => {
-      const res = await fetch("/api/posts");
+      const res = await fetch("/api/categories");
       const posts = await res.json();
 
       setPosts(posts);
     };
+    const getPostsWithCategory = async () => {
+      const res = await fetch("/api/categories");
+      const cPosts = await res.json();
+      SetCategotyPosts(cPosts);
+    }
     getPost();
+    getPostsWithCategory();
   }, []);
 
   const handleShow = (postId) => {
@@ -62,12 +69,39 @@ function Dms() {
   // Show the latest edited/created document at the top
   const reversedDocs = posts.slice().reverse();
 
+  const handleSort = () => {
+    const sortedPosts = [...reversedDocs];
+
+    sortedPosts.sort((a, b) => a.cName.localeCompare(b.cName));
+
+    setPosts(sortedPosts);
+
+  }
+  function groupByCategory(posts) {
+    const groupedCategory = {}
+    posts.forEach(post => {
+      const category = post.cName;
+      if (!groupedCategory[category]) {
+        groupedCategory[category] = [];
+      }
+      groupedCategory[category].push(post);
+      
+    });
+    return groupedCategory;
+  }
+  const groupedCategory=(groupByCategory(posts))
+
   return (
     <Main>
-      <div className="bg-white p-0 m-0">
-        {posts ? (
+    <div className="bg-white p-0 m-0">
+      <button onClick={handleSort} className="bg-white w-32 text-black font-bold border-solid">
+        Sort by category
+      </button>
+      {Object.keys(groupedCategory).map((category) => (
+        <div key={category}>
+          <h2>{category}</h2>
           <ul className="flex flex-wrap items-center list-none m-10">
-            {reversedDocs.map((post) => (
+            {groupedCategory[category].map((post) => (
               <li
                 key={post.pid}
                 className="flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5"
@@ -117,11 +151,11 @@ function Dms() {
               </li>
             ))}
           </ul>
-        ) : (
-          <div>Loading...</div>
-        )}
-      </div>
-    </Main>
+        </div>
+      ))}
+    </div>
+  </Main>
+
   );
 }
 
