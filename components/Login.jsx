@@ -1,4 +1,4 @@
-//"use client"
+"use client"
 import { useState } from "react"
 import { useRouter } from 'next/navigation';
 
@@ -12,7 +12,7 @@ export default function Login() {
     }) 
 
     const passwordEventHandler = ((event) => {
-        setPassword(event);
+        setPassword(event.target.value);
     }) 
 
     const router = useRouter();
@@ -33,10 +33,13 @@ export default function Login() {
 
             // If DB response OK:
             if (res.ok) {
+
+                alert("Welcome " + user + "! You are now logged in.");
                 setUser("");
                 setPassword("");
-                router.push("/");
-            } 
+                //router.push("/");
+
+            } else { alert("Wrong login!"); }
         } else {
             alert("Fields are empty!")
         }
@@ -47,12 +50,14 @@ export default function Login() {
         <main className='bg-white p-0 m-0'>
             
                   <form onSubmit={handleSubmit}>  
-                  <label for="username" value="Login:"/> 
-                  <input type="text" placeholder="username" id="username" onChange={userEventHandler}/>
-                  <label for="password" value="Password:"/> 
-                  <input type="text" placeholder="password" onChange={passwordEventHandler}/>
-                  <button>Logga in</button>
+                  <label htmlFor="username" value="Login:"/> 
+                  <input className="rounded-md pl-2 text-lg text-white w-32"  type="text" placeholder="username" id="username" onChange={userEventHandler}/>
+                  
+                  <label htmlFor="password" value="Password:"/> 
+                  <input className="rounded-md pl-2 text-lg text-white w-32" type="password" placeholder="password" onChange={passwordEventHandler} style={{marginLeft: "20px"}}/>
+                  <button className="ml-4 w-16 h-7 text-xs bg-gray-500 hover:bg-blue-900 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer">Login</button>
                   </form>
+
         </main>
 
     )
