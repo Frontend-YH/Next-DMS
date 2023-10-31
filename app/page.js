@@ -15,6 +15,9 @@ function Dms() {
       const posts = await res.json();
 
       setPosts(posts);
+
+      console.log(posts);
+
     };
     getPost();
   }, []);
