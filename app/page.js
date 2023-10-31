@@ -17,8 +17,8 @@ function Dms() {
       setPosts(posts);
 
       console.log(posts);
-
     };
+
     getPost();
   }, []);
 
@@ -76,6 +76,9 @@ function Dms() {
                 className="flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5"
               >
                 <div>
+                  <p className="block pb-3 font-sans text-xl text-black">
+                    {post.authorName}
+                  </p>
                   <span className="block pb-3 font-sans text-xl text-black">
                     {post.title.length > 20
                       ? post.title.substring(0, 20) + "..."
