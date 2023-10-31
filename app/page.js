@@ -78,7 +78,7 @@ function Dms() {
                       ? post.title.substring(0, 20) + "..."
                       : post.title}
                     <p className="text-sm my-1 font-semibold">
-                      {formatTimestamp(post.date)}
+                      {formatTimestamp(post.lastUpdated)}
                     </p>
                     <p
                       className="text-sm"
