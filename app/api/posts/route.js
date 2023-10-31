@@ -18,8 +18,8 @@ export async function POST(req, res) {
     const {title, content} = body;
 
     const result = await query({ 
-        query: "INSERT INTO posts (title, content) VALUES (?, ?)",
-        values: [title, content]
+        query: "INSERT INTO posts (title, content, authorId, categoryId, isPublic) VALUES (?, ?, ?, ?, ?)",
+        values: [title, content, 1, 1, 1]
     });
 
     return NextResponse.json(result, {status: 200});
