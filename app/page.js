@@ -65,16 +65,47 @@ function Dms() {
   // Show the latest edited/created document at the top
   const reversedDocs = posts.slice().reverse();
 
+  // Default 0 border on posts
+  reversedDocs.map(post=>{
+      post.border = "border-0"
+  })
+
+  // ###############################################################
+  // ########### Filter POSTS based on logged in user ##############
+  let docs = [];
+  const loggedIn = localStorage.getItem("user");
+
+  if(loggedIn===null) {
+    docs = reversedDocs.filter(post=>{
+      // Only show posts that is set as public
+      return post.isPublic===1;
+    })
+  } else {
+    docs = reversedDocs.filter(post=>{
+      // Only show posts that is set as private but belongs to the user AND public posts
+      return (post.isPublic===0 && post.userName===loggedIn) || post.isPublic===1;
+    })
+
+    docs.map(post=>{
+      if (post.userName===loggedIn) { 
+        post.border = "border-2 border-green-500"
+       }
+    })
+
+  }
+// #################################################################
+  
   return (
     <Main>
       <div className="bg-white p-0 m-0">
         {posts ? (
           <ul className="flex flex-wrap items-center list-none m-10">
-            {reversedDocs.map((post) => (
+            {docs.map((post) => (
               <li
                 key={post.pid}
-                className="flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5"
-              >
+                className={`${
+                  post.border
+                } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
                 <div>
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
