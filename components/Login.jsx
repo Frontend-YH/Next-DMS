@@ -38,6 +38,7 @@ export default function Login() {
                 localStorage.setItem('user', user);
                 setUser("");
                 setPassword("");
+                window.location.reload();
                 //router.push("/");
 
             } else { alert("Wrong login!"); }
@@ -54,7 +55,7 @@ export default function Login() {
         window.location.reload();
      }
 
-    const loggedIn = localStorage.getItem("user");
+    const loggedIn = localStorage.getItem("user") || undefined;
 
     return (
 
