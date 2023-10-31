@@ -1,243 +1,120 @@
-"use client"
-import { useState } from "react"
-import { useRouter, useSearchParams } from 'next/navigation';
-import QEditor from '@/components/QEditor'
-import './page.css';
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import QEditor from "@/components/QEditor";
+import ReactQuill from "react-quill";
+import "quill/dist/quill.bubble.css";
 
 export default function addPost() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [post, setPost] = useState({});
+  const [preview, setPreview] = useState(false);
 
-    const [title, setTitle] = useState("")
-    const [content, setContent] = useState("")
-    const [post, setPost] = useState({})
-    const [preview, setPreview] = useState(false)
+  const router = useRouter();
 
-    const router = useRouter();
+  const titleEventHandler = (event) => {
+    setTitle(event.target.value);
+  };
 
-    const titleEventHandler = ((event) => {
-        setTitle(event.target.value);
-    }) 
+  const contentEventHandler = (event) => {
+    setContent(event);
+  };
 
-    const contentEventHandler = ((event) => {
-        setContent(event);
-    }) 
+  const handlePreview = (event) => {
+    event.preventDefault();
+    setPreview(!preview);
+  };
 
-    const handlePreview = ((event) => {
-        event.preventDefault();
-        setPreview(!preview)
-    }) 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const handleSubmit = async (event) =>  {
-         event.preventDefault();
+    // Double check that the fields are not empty
+    if (title !== "" && content !== "") {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content }),
+      });
 
-         // Double check that the fields are not empty
-         if (title!=="" && content !=="") {
-            const res = await fetch("/api/posts", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({title, content})
-            })
-
-            if (res.ok) {
-                setTitle("");
-                setContent("");
-                router.push("/");
-            } 
-        } else {
-            alert("Fields are empty!")
-        }
-    }
-
-
-        // Document Edit Container Styling
-        const documentEdit = {
-            backgroundColor: "#ffffff",
-            padding: "0px",
-            margin: "0px",
-        }     
-        
-        // Document Edit Input
-        const documentEditInput = {
-            display: "block",
-            width: "350px",
-            height: "38px",
-            fontFamily: "sans-serif, arial, verdana",
-            fontSize: "12px",
-            padding: "20px",
-            border: "1px solid #aaaaaa",
-            borderRadius: "6px",
-            marginBottom: "10px",
-            backgroundColor: "#ffffff",
-            color: "#000000"
-            }    
-
-        // Document Edit TextArea
-        const documentEditTA = {
-            display: "block",
-            width: "350px",
-            height: "406px",
-            fontFamily: "sans-serif, arial, verdana",
-            fontSize: "12px",
-            padding: "20px",
-            border: "1px solid #aaaaaa",
-            borderRadius: "6px",
-            backgroundColor: "#ffffff",
-            color: "#000000"
-            }
-
-        // Document Preview Content
-        const documentPreviewContent= {
-            display: "block",
-            width: "350px",
-            height: "406px",
-            fontFamily: "sans-serif, arial, verdana",
-            fontSize: "12px",
-            padding: "30px",
-            border: "1px solid #aaaaaa",
-            borderRadius: "6px",
-            backgroundColor: "#ffffff",
-            color: "#000000",
-            textAlign: "left"
-            }
-
-        // Document Ul Styling
-        const documentUl = {
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            listStyle: "none"
-        
-        }     
-
-    // Document Li Styling
-    const documentLi = {
-        width: "100%",
-        height: "fit-content",
-        margin: "8px",
-        padding: "20px",
-        borderRadius: "6px",
-        textAlign: "center",
-        backgroundColor: "#cccccc",
-        boxShadow: "rgba(0, 0, 0, 0.30) 1.95px 1.95px 2.6px"
-        
-    }
-
-    // Document Label Styling
-    const documentLabel = {
-        display: "block",
-        fontFamily: "sans-serif, arial, verdana",
-        fontSize: "20px",
-        textAlign: "center",
-        color: "#000000"
-    }  
-   
-    // Document Preview Title Styling
-    const documentPreviewTitle = {
-        display: "block",
-        fontFamily: "sans-serif, arial, verdana",
-        fontSize: "20px",
-        textAlign: "center",
-        color: "#000000",
-        textAlign: "center"
-    }  
-
-    const documentPreviewBtn = {
-
-        fontSize: "12px",
-        backgroundColor: "#6178C8",
-        color: "#ffffff",
-        border: "0px",
-        borderRadius: "6px",
-        width: "130px",
-        height: "36px",
-        padding: "10px",
-        cursor: "pointer"
-    
-        }
-
-        const documentPreviewBtnClose = {
-
-            fontSize: "12px",
-            backgroundColor: "#777777",
-            color: "#ffffff",
-            border: "0px",
-            borderRadius: "6px",
-            width: "130px",
-            height: "36px",
-            padding: "10px",
-            cursor: "pointer"
-        
-            } 
-
-    const documentCreateBtn = {
-
-    fontSize: "12px",
-    backgroundColor: "#779B29",
-    color: "#ffffff",
-    border: "0px",
-    borderRadius: "6px",
-    width: "130px",
-    height: "36px",
-    padding: "10px",
-    cursor: "pointer"
-
-    }
-
-    const btnDiv = {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        width: "100%",
+      if (res.ok) {
+        setTitle("");
+        setContent("");
+        router.push("/");
       }
-
-    return (
-
-        <div style={documentEdit}>
-
-        {post ? (
-
+    } else {
+      alert("Fields are empty!");
+    }
+  };
+  return (
+    <div className="bg-white p-0 m-0">
+      {post ? (
         <div>
-        <form onSubmit={handleSubmit}>
-        <ul style={documentUl}>
-        <li style={documentLi}>
+          <form onSubmit={handleSubmit}>
+            <ul className="flex flex-col items-center list-none">
+              <li className="w-full h-auto my-2 px-5 py-10 rounded text-center shadow text-black">
+                {preview ? (
+                  <div>
+                    <label className="block font-sans text-2xl text-center text-black">
+                      {title}
+                    </label>
+                    <ReactQuill
+                      theme="bubble"
+                      value={content || ""}
+                      readOnly={true}
+                      className="text-black"
+                    />
+                    <div className="flex flex-row justify-around w-full">
+                      <button
+                        className="text-sm bg-gray-600 text-white border-0 rounded-md w-32 h-9 px-2.5 cursor-pointer"
+                        onClick={handlePreview}
+                      >
+                        Close Preview
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block font-sans text-2xl pb-4 text-left text-black">
+                      Document Title
+                    </label>
+                    <input
+                      className="block w-80 h-9 font-sans text-sm p-5 border border-gray-400 rounded bg-white text-black"
+                      defaultValue={title}
+                      type="text"
+                      onChange={titleEventHandler}
+                    />
+                    <label className="block font-sans text-2xl py-4 text-left text-black">
+                      Text Content
+                    </label>
 
-        {preview ? (
-            <div>
-                <label style={documentPreviewTitle}>{title}</label><br/>
-                <div style={documentPreviewContent} dangerouslySetInnerHTML={{ __html: content }} className="html-content"/><br/>
-                <div style={btnDiv}>
-                <button style={documentPreviewBtnClose} onClick={handlePreview}>Close Preview</button>
-                </div>
-            </div>
+                    <QEditor onChange={contentEventHandler} value={content} />
+
+                    <div className="flex flex-row justify-around w-full">
+                      <button
+                        className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                        onClick={handlePreview}
+                      >
+                        Preview
+                      </button>
+                      <button
+                        className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                        type="submit"
+                      >
+                        Create document
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            </ul>
+          </form>
+        </div>
       ) : (
-        <div>
-            <label style={documentLabel}>Document Title</label>
-            <input style={documentEditInput} defaultValue={title} type="text" onChange={titleEventHandler}/> 
-            <label style={documentLabel}>Text Content</label>
-
-            <QEditor onChange={contentEventHandler} value={content}/>
-
-            <div style={btnDiv}>
-            <button style={documentPreviewBtn} onClick={handlePreview}>Preview document</button>
-            <button style={documentCreateBtn} type="submit">Create document</button>
-            </div>
-        </div>
+        <div>Loading...</div>
       )}
-
-        </li>
-        </ul>
-        </form> 
-        </div>
-
-        ) : (
-            <div>Loading...</div>
-        )}
-
     </div>
-
-    )
-
+  );
 }
-
-// <textarea style={documentEditTA} defaultValue={content} onChange={contentEventHandler}/><br/>
