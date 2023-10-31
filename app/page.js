@@ -90,6 +90,9 @@ function Dms() {
       if (post.userName===loggedIn) { 
         post.border = "border-2 border-green-500"
        }
+       if (post.userName===loggedIn && post.isPublic===0) { 
+        post.border = "border-2 border-red-500"
+       }
     })
 
   }
@@ -122,7 +125,7 @@ function Dms() {
                       dangerouslySetInnerHTML={{
                         __html:
                           post.content.length > 100
-                            ? post.content.substring(0, 100) + "..."
+                            ? post.content.substring(0, 80) + "..."
                             : post.content,
                       }}
                     />
