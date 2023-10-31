@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(req, res) {
 
     const result = await query({ 
-        query: "SELECT * FROM posts WHERE deleted=0"
+        query: "SELECT * FROM posts WHERE isDeleted=0"
     })
     return NextResponse.json(result, {status: 200});
     
