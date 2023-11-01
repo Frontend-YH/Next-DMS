@@ -83,7 +83,7 @@ function Dms() {
   if(loggedIn===null) {
     docs = reversedDocs.filter(post=>{
       // Only show posts that is set as public
-      return post.isPublic===1;
+      return post.isPublic===2;
     })
   } else {
     docs = reversedDocs.filter(post=>{
