@@ -16,6 +16,8 @@ function Dms() {
       const posts = await res.json();
 
       setPosts(posts);
+
+      console.log(posts);
     };
     const getPostsWithCategory = async () => {
       const res = await fetch("/api/categories");
@@ -69,6 +71,40 @@ function Dms() {
   // Show the latest edited/created document at the top
   const reversedDocs = posts.slice().reverse();
 
+  // Default 0 border on posts
+  reversedDocs.map(post=>{
+      post.border = "border-0"
+  })
+
+  // #######################################################################################
+  // ########### Filter POSTS based on logged in user ######################################
+  let docs = [];
+  const loggedIn = localStorage.getItem("user"); 
+  const userId = localStorage.getItem("userId");
+
+  if(loggedIn===null) {
+    docs = reversedDocs.filter(post=>{
+      // Only show posts that is set as public
+      return post.isPublic===1;
+    })
+  } else {
+    docs = reversedDocs.filter(post=>{
+      // Only show posts that is set as private but belongs to the user AND public posts
+      return (post.isPublic===0 && post.userName===loggedIn) || post.isPublic===1;
+    })
+
+    docs.map(post=>{
+      if (post.userName===loggedIn) { 
+        post.border = "border-2 border-green-500"
+       }
+       if (post.userName===loggedIn && post.isPublic===0) { 
+        post.border = "border-2 border-red-500"
+       }
+    })
+
+  }
+// ##########################################################################################
+  
   const handleSort = () => {
     const sortedPosts = [...reversedDocs];
 
@@ -104,9 +140,13 @@ function Dms() {
             {groupedCategory[category].map((post) => (
               <li
                 key={post.pid}
-                className="flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5"
-              >
+                className={`${
+                  post.border
+                } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
                 <div>
+                  <p className="block pb-3 font-sans text-xl text-black">
+                    {post.authorName}
+                  </p>
                   <span className="block pb-3 font-sans text-xl text-black">
                     {post.title.length > 20
                       ? post.title.substring(0, 20) + "..."
@@ -119,12 +159,13 @@ function Dms() {
                       dangerouslySetInnerHTML={{
                         __html:
                           post.content.length > 100
-                            ? post.content.substring(0, 100) + "..."
+                            ? post.content.substring(0, 80) + "..."
                             : post.content,
                       }}
                     />
                   </span>
                 </div>
+                {(post.userName===loggedIn) ? (
                 <div className="flex flex-row justify-around w-full space-x-4">
                   <button
                     className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
@@ -148,6 +189,17 @@ function Dms() {
                     Delete
                   </button>
                 </div>
+                ) : ( 
+                <div className="flex flex-row justify-around w-full space-x-4">
+                  <button
+                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                    name={post.pid}
+                    onClick={showClickHandler}
+                  >
+                    Open
+                  </button>
+                </div> 
+                )}
               </li>
             ))}
           </ul>
