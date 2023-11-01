@@ -73,13 +73,17 @@ function Dms() {
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
-  const loggedIn = localStorage.getItem("user"); 
-  const userId = localStorage.getItem("userId");
+
+  //const loggedIn = localStorage.getItem("user"); 
+  const loggedIn = typeof localStorage !== 'undefined' ? localStorage.getItem("user") : null;
+
+  //const userId = localStorage.getItem("userId");
+  const userId = typeof localStorage !== 'undefined' ? localStorage.getItem("userId") : null;
 
   if(loggedIn===null) {
     docs = reversedDocs.filter(post=>{
       // Only show posts that is set as public
-      return post.isPublic===1;
+      return post.isPublic===2;
     })
   } else {
     docs = reversedDocs.filter(post=>{

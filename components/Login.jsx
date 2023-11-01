@@ -1,11 +1,18 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 //import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
+    const [loggedIn, setLoggedIn] = useState("");
+
+    useEffect(() => {
+        // Perform localStorage action
+        setLoggedIn(localStorage.getItem("user") || "")
+        
+      }, [])
 
     const userEventHandler = ((event) => {
         setUser(event.target.value);
@@ -58,7 +65,11 @@ export default function Login() {
         window.location.reload();
      }
 
-    const loggedIn = localStorage.getItem("user") || undefined;
+    //let loggedIn = undefined;
+
+    //loggedIn = localStorage.getItem("user");
+
+
 
     return (
 
@@ -75,10 +86,10 @@ export default function Login() {
          
                 <form onSubmit={handleLoginSubmit}>  
                 <label htmlFor="username" value="Login:"/> 
-                <input className="rounded-md pl-2 text-lg text-white w-32"  type="text" placeholder="username" id="username" onChange={userEventHandler}/>
+                <input className="rounded-md pl-2 text-lg w-32 autofill:shadow-[inset_0_0_0px_1000px_rgb(70,70,70)]" type="text" placeholder="username" id="username" onChange={userEventHandler}/>
                 
                 <label htmlFor="password" value="Password:"/> 
-                <input className="rounded-md pl-2 text-lg text-white w-32" type="password" placeholder="password" onChange={passwordEventHandler} style={{marginLeft: "20px"}}/>
+                <input className="rounded-md pl-2 text-lg text-white w-32 autofill:shadow-[inset_0_0_0px_1000px_rgb(70,70,70)]" type="password" placeholder="password" onChange={passwordEventHandler} style={{marginLeft: "20px"}}/>
                 <button className="ml-4 w-16 h-7 text-xs bg-gray-500 hover:bg-blue-900 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer">Login</button>
                 </form>
 
