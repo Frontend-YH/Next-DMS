@@ -12,6 +12,7 @@ export default function editPost() {
   const [preview, setPreview] = useState(false);
   const [isPublic, setIsPublic] = useState(1);
   const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState([]);
 
   const router = useRouter();
 
@@ -32,6 +33,21 @@ export default function editPost() {
     };
     if (postId) getPost();
   }, [postId]);
+
+
+  useEffect(() => {
+
+    const getCategories = async () => {
+      const res = await fetch("/api/categories");
+      const cats = await res.json();
+
+      setCategories(cats);
+
+    };
+
+    getCategories();
+  }, []);
+
 
   const titleEventHandler = (event) => {
     setTitle(event.target.value);
@@ -72,6 +88,8 @@ export default function editPost() {
       router.push("/");
     }
   };
+
+  let selected = "";
 
   return (
     <div className="bg-white p-0 m-0">
@@ -131,7 +149,7 @@ export default function editPost() {
                         Save changes
                       </button>
                     </div>
-            <div>
+                    <div>
                       <input
                         className="m-5 p-5 text-center rounded-lg"
                         type="checkbox"
@@ -143,29 +161,28 @@ export default function editPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                    <select className="bg-white border-black" onChange={handleCategory}>
-  <option value="" selected disabled>
-    Choose your category
-  </option>
-  <option value={1}>
-    Default
-  </option>
-  <option value={2}>
-    Resumé
-  </option>
-  <option value={3}>
-    Essay
-  </option>
-  <option value={4}>
-    Article
-  </option>
-</select>
+                      <select
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                        <option value="" selected disabled>
+                          Choose your category
+                        </option>
+                        {categories.map((cat) => (
+                          <option
+                            key={cat.categoryId}
+                            value={cat.categoryId}
+                            selected={post.categoryId === cat.categoryId}
+                          >
+                            {cat.cName}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 )}
               </li>
             </ul>
-                  
           </form>
         </div>
       ) : (
