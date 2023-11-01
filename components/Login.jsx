@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 //import { useRouter } from 'next/navigation';
 
 export default function Login() {
@@ -73,11 +74,13 @@ export default function Login() {
 
     return (
 
-        <main className='bg-white p-0 m-0'>
+        <div className='bg-white p-0 m-0'>
 
              {loggedIn ? (
                 
-                <div>
+                <div className="relative flex gap-5">
+                <Link href="/add-post"><button className="bg-gray-500 hover:bg-blue-900 text-white text-sm py-2 px-4 rounded shadow-md">Create Document</button></Link>
+                <Link href="/"><button className="bg-gray-500 hover:bg-blue-900 text-white text-sm py-2 px-4 rounded shadow-md">List Documents</button></Link>
                 <p className="inline m-0 p-0 text-black mr-2">User: {loggedIn}</p> 
                 <button className="ml-4 w-16 h-7 text-xs bg-gray-500 hover:bg-blue-900 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer" onClick={handleLogout}>Logout</button>
                 </div>
@@ -95,7 +98,7 @@ export default function Login() {
 
              )}
 
-             </main>
+             </div>
 
     )
   }
