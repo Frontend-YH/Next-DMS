@@ -10,6 +10,8 @@ export default function editPost() {
   const [content, setContent] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
+  const [isPublic, setIsPublic] = useState(1);
+  const [categoryId, setCategoryId] = useState("");
 
   const router = useRouter();
 
@@ -35,6 +37,17 @@ export default function editPost() {
     setTitle(event.target.value);
   };
 
+  const handlePrivate = (event) => {
+    setIsPublic(event.target.checked ? 0 : 1);
+    console.log(isPublic);
+    
+  };
+  const handleCategory = (event) => {
+    setCategoryId(event.target.value);
+    console.log(categoryId);
+    
+  };
+
   const contentEventHandler = (event) => {
     setContent(event);
   };
@@ -52,7 +65,7 @@ export default function editPost() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, categoryId, isPublic }),
     });
 
     if (res.ok) {
@@ -118,10 +131,41 @@ export default function editPost() {
                         Save changes
                       </button>
                     </div>
+            <div>
+                      <input
+                        className="m-5 p-5 text-center rounded-lg"
+                        type="checkbox"
+                        id="option1"
+                        name="option"
+                        value="private"
+                        onChange={handlePrivate}
+                      />
+                      <label htmlFor="option1">Make private</label>
+                    </div>
+                    <div>
+                    <select className="bg-white border-black" onChange={handleCategory}>
+  <option value="" selected disabled>
+    Choose your category
+  </option>
+  <option value={1}>
+    Default
+  </option>
+  <option value={2}>
+    Resumé
+  </option>
+  <option value={3}>
+    Essay
+  </option>
+  <option value={4}>
+    Article
+  </option>
+</select>
+                    </div>
                   </div>
                 )}
               </li>
             </ul>
+                  
           </form>
         </div>
       ) : (
