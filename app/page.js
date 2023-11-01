@@ -70,8 +70,8 @@ function Dms() {
       post.border = "border-0"
   })
 
-  // ###############################################################
-  // ########### Filter POSTS based on logged in user ##############
+  // #######################################################################################
+  // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
   const loggedIn = localStorage.getItem("user");
 
@@ -96,7 +96,7 @@ function Dms() {
     })
 
   }
-// #################################################################
+// ##########################################################################################
   
   return (
     <Main>
@@ -131,6 +131,7 @@ function Dms() {
                     />
                   </span>
                 </div>
+                {(post.userName===loggedIn) ? (
                 <div className="flex flex-row justify-around w-full space-x-4">
                   <button
                     className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
@@ -154,6 +155,7 @@ function Dms() {
                     Delete
                   </button>
                 </div>
+                ) : ( <div></div> )}
               </li>
             ))}
           </ul>
