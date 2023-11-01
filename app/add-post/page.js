@@ -12,8 +12,23 @@ export default function addPost() {
   const [categoryId, setCategoryId] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
+  const [categories, setCategories] = useState([]);
+
 
   const router = useRouter();
+
+  useEffect(() => {
+
+    const getCategories = async () => {
+      const res = await fetch("/api/categories");
+      const cats = await res.json();
+
+      setCategories(cats);
+
+    };
+
+    getCategories();
+  }, []);
 
   const titleEventHandler = (event) => {
     setTitle(event.target.value);
@@ -140,23 +155,18 @@ export default function addPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                    <select className="bg-white border-black" onChange={handleCategory}>
-  <option value="" selected disabled>
-    Choose your category
-  </option>
-  <option value={1}>
-    Default
-  </option>
-  <option value={2}>
-    Resumé
-  </option>
-  <option value={3}>
-    Essay
-  </option>
-  <option value={4}>
-    Article
-  </option>
-</select>
+                      <select
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                    <option value="" selected disabled>
+                      Choose your category
+                    </option>
+                         {categories.map((cat) => (
+                            <option value={cat.categoryId}>{cat.cName}</option>
+                         ))}
+                      </select>
+
                     </div>
                   </div>
                 )}
