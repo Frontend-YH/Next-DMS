@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
@@ -8,6 +8,7 @@ import "quill/dist/quill.bubble.css";
 export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isPublic, setIsPublic] = useState(1);
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
 
@@ -19,6 +20,12 @@ export default function addPost() {
 
   const contentEventHandler = (event) => {
     setContent(event);
+  };
+
+  const handlePrivate = (event) => {
+    setIsPublic(event.target.checked ? 0 : 1);
+    console.log(isPublic);
+    
   };
 
   const handlePreview = (event) => {
@@ -36,18 +43,22 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ title, content, isPublic }),
+        
       });
 
       if (res.ok) {
         setTitle("");
         setContent("");
+        setIsPublic(1)
         router.push("/");
       }
     } else {
       alert("Fields are empty!");
     }
   };
+
+  
   return (
     <div className="bg-white p-0 m-0">
       {post ? (
@@ -105,6 +116,17 @@ export default function addPost() {
                       >
                         Create document
                       </button>
+                    </div>
+                    <div>
+                      <input
+                        className="m-5 p-5"
+                        type="checkbox"
+                        id="option1"
+                        name="option"
+                        value="private"
+                        onChange={handlePrivate}
+                      />
+                      <label htmlFor="option1">Make private</label>
                     </div>
                   </div>
                 )}
