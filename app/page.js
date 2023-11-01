@@ -73,7 +73,8 @@ function Dms() {
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
-  const loggedIn = localStorage.getItem("user");
+  const loggedIn = localStorage.getItem("user"); 
+  const userId = localStorage.getItem("userId");
 
   if(loggedIn===null) {
     docs = reversedDocs.filter(post=>{
