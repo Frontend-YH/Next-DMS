@@ -64,11 +64,11 @@ function Dms() {
   }
 
   const favClickHandler = async (e) => {
-    const postId = e.target.name;
-    const authorId = loggedIn;
+    const postId = parseInt(e.target.name);
+    const authorId = parseInt(userId);
     const isFav = favorite ? 0 : 1;
 
-    const res = await fetch("/api/favorites/route", {
+    const res = await fetch("/api/favorites/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function Dms() {
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
-  const loggedIn = localStorage.getItem("user"); 
+  const loggedIn = localStorage.getItem("user");
   const userId = localStorage.getItem("userId");
 
   if (loggedIn === null) {
