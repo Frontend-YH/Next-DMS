@@ -36,6 +36,8 @@ export default function Login() {
 
                 //alert("Welcome " + user + "! You are now logged in.");
                 localStorage.setItem('user', user);
+                let data = await res.json();      
+                localStorage.setItem('userId', data[0].authorId);
                 setUser("");
                 setPassword("");
                 window.location.reload();
@@ -51,6 +53,7 @@ export default function Login() {
      const handleLogout = async (event) =>  {
         event.preventDefault();
         localStorage.removeItem("user");
+        localStorage.removeItem("userId");
         //router.push("/");
         window.location.reload();
      }
