@@ -155,7 +155,17 @@ function Dms() {
                     Delete
                   </button>
                 </div>
-                ) : ( <div></div> )}
+                ) : ( 
+                <div className="flex flex-row justify-around w-full space-x-4">
+                  <button
+                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                    name={post.pid}
+                    onClick={showClickHandler}
+                  >
+                    Open
+                  </button>
+                </div> 
+                )}
               </li>
             ))}
           </ul>
