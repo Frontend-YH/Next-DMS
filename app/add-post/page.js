@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
@@ -9,6 +9,7 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(1);
+  const [categoryId, setCategoryId] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
 
@@ -27,6 +28,11 @@ export default function addPost() {
     console.log(isPublic);
     
   };
+  const handleCategory = (event) => {
+    setCategoryId(event.target.value);
+    console.log(categoryId);
+    
+  };
 
   const handlePreview = (event) => {
     event.preventDefault();
@@ -43,7 +49,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, isPublic }),
+        body: JSON.stringify({ title, content, categoryId, isPublic }),
         
       });
 
@@ -51,12 +57,17 @@ export default function addPost() {
         setTitle("");
         setContent("");
         setIsPublic(1)
+        setCategoryId("");
         router.push("/");
       }
     } else {
       alert("Fields are empty!");
     }
   };
+
+  useEffect(() => {
+    console.log(categoryId);
+  }, [categoryId]);
 
   
   return (
@@ -119,7 +130,7 @@ export default function addPost() {
                     </div>
                     <div>
                       <input
-                        className="m-5 p-5"
+                        className="m-5 p-5 text-center"
                         type="checkbox"
                         id="option1"
                         name="option"
@@ -127,6 +138,25 @@ export default function addPost() {
                         onChange={handlePrivate}
                       />
                       <label htmlFor="option1">Make private</label>
+                    </div>
+                    <div>
+                    <select className="bg-white border-black" onChange={handleCategory}>
+  <option value="" selected disabled>
+    Choose your category
+  </option>
+  <option value={1}>
+    Default
+  </option>
+  <option value={2}>
+    Resumé
+  </option>
+  <option value={3}>
+    Essay
+  </option>
+  <option value={4}>
+    Article
+  </option>
+</select>
                     </div>
                   </div>
                 )}
