@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
