@@ -6,7 +6,6 @@ import { format } from "date-fns";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
-  const [categoryPosts, SetCategotyPosts]=useState([])
 
   const router = useRouter();
 
@@ -127,7 +126,9 @@ function Dms() {
 
   return (
     <Main>
-    <div className="bg-white p-0 m-0">
+      
+        
+        <div className="bg-white p-0 m-0">
       <button onClick={handleSort} className="bg-white w-32 text-black font-bold border-solid">
         Sort by category
       </button>
@@ -137,10 +138,10 @@ function Dms() {
           <ul className="flex flex-wrap items-center list-none m-10">
             {groupedCategory[category].map((post) => (
               <li
-                key={post.pid}
-                className={`${
-                  post.border
-                } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
+              key={post.pid}
+              className={`${
+                post.border
+              } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
                 <div>
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
@@ -156,12 +157,13 @@ function Dms() {
                       className="text-sm"
                       dangerouslySetInnerHTML={{
                         __html:
-                          post.content.length > 100
-                            ? post.content.substring(0, 80) + "..."
-                            : post.content,
+                        post.content.length > 100
+                        ? post.content.substring(0, 80) + "..."
+                        : post.content,
                       }}
                     />
                   </span>
+                
                 </div>
                 {(post.userName===loggedIn) ? (
                 <div className="flex flex-row justify-around w-full space-x-4">
