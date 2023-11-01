@@ -6,6 +6,7 @@ import { format } from "date-fns";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
+  const [favorite, setFavorite] = useState(false);
 
   const router = useRouter();
 
@@ -62,42 +63,63 @@ function Dms() {
     return formattedDate;
   }
 
+  const favClickHandler = async (e) => {
+    const postId = e.target.name;
+    const authorId = loggedIn;
+    const isFav = favorite ? 0 : 1;
+
+    const res = await fetch("/api/favorites/route", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, authorId, isFav }),
+    });
+
+    if (res.ok) {
+      setFavorite(!favorite);
+    } else {
+    }
+  };
+
   // Show the latest edited/created document at the top
   const reversedDocs = posts.slice().reverse();
 
   // Default 0 border on posts
-  reversedDocs.map(post=>{
-      post.border = "border-0"
-  })
+  reversedDocs.map((post) => {
+    post.border = "border-0";
+  });
 
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
   const loggedIn = localStorage.getItem("user");
 
-  if(loggedIn===null) {
-    docs = reversedDocs.filter(post=>{
+  if (loggedIn === null) {
+    docs = reversedDocs.filter((post) => {
       // Only show posts that is set as public
-      return post.isPublic===1;
-    })
+      return post.isPublic === 1;
+    });
   } else {
-    docs = reversedDocs.filter(post=>{
+    docs = reversedDocs.filter((post) => {
       // Only show posts that is set as private but belongs to the user AND public posts
-      return (post.isPublic===0 && post.userName===loggedIn) || post.isPublic===1;
-    })
+      return (
+        (post.isPublic === 0 && post.userName === loggedIn) ||
+        post.isPublic === 1
+      );
+    });
 
-    docs.map(post=>{
-      if (post.userName===loggedIn) { 
-        post.border = "border-2 border-green-500"
-       }
-       if (post.userName===loggedIn && post.isPublic===0) { 
-        post.border = "border-2 border-red-500"
-       }
-    })
-
+    docs.map((post) => {
+      if (post.userName === loggedIn) {
+        post.border = "border-2 border-green-500";
+      }
+      if (post.userName === loggedIn && post.isPublic === 0) {
+        post.border = "border-2 border-red-500";
+      }
+    });
   }
-// ##########################################################################################
-  
+  // ##########################################################################################
+
   return (
     <Main>
       <div className="bg-white p-0 m-0">
@@ -106,9 +128,8 @@ function Dms() {
             {docs.map((post) => (
               <li
                 key={post.pid}
-                className={`${
-                  post.border
-                } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
+                className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
+              >
                 <div>
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
@@ -131,40 +152,51 @@ function Dms() {
                     />
                   </span>
                 </div>
-                {(post.userName===loggedIn) ? (
-                <div className="flex flex-row justify-around w-full space-x-4">
-                  <button
-                    className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={editClickHandler}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={showClickHandler}
-                  >
-                    Open
-                  </button>
-                  <button
-                    className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={deleteClickHandler}
-                  >
-                    Delete
-                  </button>
-                </div>
-                ) : ( 
-                <div className="flex flex-row justify-around w-full space-x-4">
-                  <button
-                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={showClickHandler}
-                  >
-                    Open
-                  </button>
-                </div> 
+                {post.userName === loggedIn ? (
+                  <div className="flex flex-row justify-around w-full space-x-4">
+                    <button
+                      className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={editClickHandler}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={showClickHandler}
+                    >
+                      Open
+                    </button>
+                    <button
+                      className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={deleteClickHandler}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
+                        favorite
+                          ? "bg-red-600 text-white"
+                          : "bg-yellow-600 text-black"
+                      }`}
+                      name={post.pid}
+                      onClick={favClickHandler}
+                    >
+                      Favorite
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-row justify-around w-full space-x-4">
+                    <button
+                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={showClickHandler}
+                    >
+                      Open
+                    </button>
+                  </div>
                 )}
               </li>
             ))}
