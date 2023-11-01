@@ -9,7 +9,7 @@ export async function POST(req, res) {
    
 
     const result = await query({ 
-        query: "SELECT * FROM authors WHERE userName=? AND password=?",
+        query: "SELECT * FROM authors WHERE BINARY userName=? AND BINARY password=?",
         values: [user, password]
     })
 
