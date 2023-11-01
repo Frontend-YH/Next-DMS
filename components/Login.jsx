@@ -1,11 +1,18 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 //import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
+    const [loggedIn, setLoggedIn] = useState("");
+
+    useEffect(() => {
+        // Perform localStorage action
+        setLoggedIn(localStorage.getItem("user") || "")
+        
+      }, [])
 
     const userEventHandler = ((event) => {
         setUser(event.target.value);
@@ -58,7 +65,11 @@ export default function Login() {
         window.location.reload();
      }
 
-    const loggedIn = localStorage.getItem("user") || undefined;
+    //let loggedIn = undefined;
+
+    //loggedIn = localStorage.getItem("user");
+
+
 
     return (
 
