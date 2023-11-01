@@ -16,6 +16,7 @@ export default function Login() {
       }, [])
 
     const userEventHandler = ((event) => {
+        // Changed to to lower Case to fix bug
         setUser(event.target.value.toLowerCase());
     }) 
 
