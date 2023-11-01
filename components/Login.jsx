@@ -16,7 +16,7 @@ export default function Login() {
       }, [])
 
     const userEventHandler = ((event) => {
-        setUser(event.target.value);
+        setUser(event.target.value.toLowerCase());
     }) 
 
     const passwordEventHandler = ((event) => {

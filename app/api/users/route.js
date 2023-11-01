@@ -5,12 +5,15 @@ export async function POST(req, res) {
 
     const body = await req.json();
 
-    const {user, password} = body;
+    const { user, password} = body;
+   
 
     const result = await query({ 
         query: "SELECT * FROM authors WHERE userName=? AND password=?",
         values: [user, password]
     })
+
+    
 
     if (result.length === 0) {
         // No user rows found
