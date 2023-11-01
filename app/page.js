@@ -12,20 +12,14 @@ function Dms() {
 
   useEffect(() => {
     const getPost = async () => {
-      const res = await fetch("/api/categories");
+      const res = await fetch("/api/posts");
       const posts = await res.json();
 
       setPosts(posts);
 
       console.log(posts);
     };
-    const getPostsWithCategory = async () => {
-      const res = await fetch("/api/categories");
-      const cPosts = await res.json();
-      SetCategotyPosts(cPosts);
-    }
     getPost();
-    getPostsWithCategory();
   }, []);
 
   const handleShow = (postId) => {
