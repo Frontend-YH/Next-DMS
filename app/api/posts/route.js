@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(req, res) {
 
     const result = await query({ 
-        query: "SELECT posts.*, authors.* FROM posts JOIN authors ON posts.authorId = authors.authorId WHERE posts.isDeleted = 0"
+        //query: "SELECT posts.*, authors.* FROM posts JOIN authors ON posts.authorId = authors.authorId WHERE posts.isDeleted = 0"
+        query: "SELECT posts.*, authors.*, categories.* FROM posts JOIN authors ON posts.authorId = authors.authorId JOIN categories ON posts.categoryId = categories.categoryId WHERE posts.isDeleted = 0"
     })
     
 
