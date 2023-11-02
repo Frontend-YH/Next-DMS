@@ -6,7 +6,7 @@ import { format } from "date-fns";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
-  const [favorite, setFavorite] = useState(false);
+  const [favorites, setFavorites] = useState({});
 
   const router = useRouter();
 
@@ -66,7 +66,6 @@ function Dms() {
   const favClickHandler = async (e) => {
     const postId = parseInt(e.target.name);
     const authorId = parseInt(userId);
-    const isFav = favorite ? 0 : 1;
 
     const res = await fetch("/api/favorites/", {
       method: "POST",
@@ -77,8 +76,10 @@ function Dms() {
     });
 
     if (res.ok) {
-      setFavorite(!favorite);
-    } else {
+      setFavorites((prevFavorites) => ({
+        ...prevFavorites,
+        [postId]: !prevFavorites[postId],
+      }));
     }
   };
 
@@ -178,7 +179,7 @@ function Dms() {
                     </button>
                     <button
                       className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
-                        favorite
+                        favorites[post.pid]
                           ? "bg-red-600 text-white"
                           : "bg-yellow-600 text-black"
                       }`}
