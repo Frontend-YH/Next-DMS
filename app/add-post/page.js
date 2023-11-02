@@ -9,6 +9,7 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(1);
+  const [authorId, setAuthorId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
@@ -16,6 +17,12 @@ export default function addPost() {
 
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    setAuthorId(localStorage.getItem("userId") || "")
+    
+  }, [])
 
   useEffect(() => {
 
@@ -64,7 +71,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, categoryId, isPublic }),
+        body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
         
       });
 

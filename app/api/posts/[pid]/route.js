@@ -16,11 +16,11 @@ export async function PATCH(req, {params}) {
     const {pid} = params;
     const body = await req.json();
 
-    const {title, content, categoryId, isPublic} = body;
+    const {title, content, authorId, categoryId, isPublic} = body;
 
     const result = await query({ 
-        query: "UPDATE posts SET title=?, content=?, categoryId=?, isPublic=? WHERE pid = ?",
-        values: [title, content, categoryId, isPublic, parseInt(pid)]
+        query: "UPDATE posts SET title=?, content=?, authorId=?, categoryId=?, isPublic=? WHERE pid = ?",
+        values: [title, content, authorId, categoryId, isPublic, parseInt(pid)]
     })
 
     return NextResponse.json(result, {status: 200});
