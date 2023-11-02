@@ -11,10 +11,17 @@ export default function editPost() {
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
   const [isPublic, setIsPublic] = useState(1);
+  const [authorId, setAuthorId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    setAuthorId(localStorage.getItem("userId") || "")
+    
+  }, [])
 
   const searchParams = useSearchParams();
   const postId = searchParams.get("pid");
@@ -81,7 +88,7 @@ export default function editPost() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, categoryId, isPublic }),
+      body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
     });
 
     if (res.ok) {

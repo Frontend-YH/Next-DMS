@@ -19,11 +19,11 @@ export async function POST(req, res) {
 
     const body = await req.json();
 
-    const {title, content, categoryId, isPublic} = body;
+    const {title, content, authorId, categoryId, isPublic} = body;
 
     const result = await query({ 
         query: "INSERT INTO posts (title, content, authorId, categoryId, isPublic) VALUES (?, ?, ?, ?, ?)",
-        values: [title, content, 1, categoryId, isPublic]
+        values: [title, content, authorId, categoryId, isPublic]
     });
 
     
