@@ -99,7 +99,7 @@ export default function editPost() {
     //let contentx = "content xx";
     //let authorIdx = 1;
     //let categoryIdx = 1;
-    let lastUpdatedx = "";
+    //let lastUpdatedx = "";
     //let isPublicx = 1;
 
     let postIdx = 15;
