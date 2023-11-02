@@ -9,8 +9,8 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(1);
-  const [authorId, setAuthorId] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [authorId, setAuthorId] = useState(1);
+  const [categoryId, setCategoryId] = useState(1);
   const [lastUpdated, setLastUpdated] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
@@ -63,13 +63,15 @@ export default function addPost() {
   };
 
   const handleSubmit = async (event) => {
+
     event.preventDefault();
 
     const currentTime = new Date();
     const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
-    
-    console.log(timeStamp);
+    const lastUpdated = timeStamp;
+
     setLastUpdated(timeStamp);
+
     // Double check that the fields are not empty
     if (title !== "" && content !== "") {
       const res = await fetch("/api/posts", {
@@ -77,7 +79,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, authorId, categoryId, lastUpdated, isPublic }),
+        body: JSON.stringify({ title, content, authorId, categoryId, isPublic, lastUpdated }),
         
       });
 
@@ -89,6 +91,7 @@ export default function addPost() {
         setLastUpdated("");
         router.push("/");
       }
+
     } else {
       alert("Fields are empty!");
     }
