@@ -12,6 +12,7 @@ export default function editPost() {
   const [preview, setPreview] = useState(false);
   const [isPublic, setIsPublic] = useState(1);
   const [authorId, setAuthorId] = useState("");
+  const [lastUpdated, setLastUpdated] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
 
@@ -83,12 +84,16 @@ export default function editPost() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const currentTime = new Date();
+    const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
+
+    setLastUpdated(timeStamp);
     const res = await fetch("/api/posts/" + postId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
+      body: JSON.stringify({ title, content, authorId, categoryId, lastUpdated, isPublic }),
     });
 
     if (res.ok) {
@@ -168,23 +173,20 @@ export default function editPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                      <select
-                        className="bg-white border-black"
-                        onChange={handleCategory}
-                      >
-                        <option value="" selected disabled>
-                          Choose your category
-                        </option>
-                        {categories.map((cat) => (
-                          <option
-                            key={cat.categoryId}
-                            value={cat.categoryId}
-                            selected={post.categoryId === cat.categoryId}
-                          >
-                            {cat.cName}
-                          </option>
-                        ))}
-                      </select>
+                    <select
+    value={post.categoryId}
+    className="bg-white border-black"
+    onChange={handleCategory}
+  >
+    <option value="" disabled>
+      Choose your category
+    </option>
+    {categories.map((cat) => (
+      <option key={cat.categoryId} value={cat.categoryId}>
+        {cat.cName}
+      </option>
+    ))}
+  </select>
                     </div>
                   </div>
                 )}
