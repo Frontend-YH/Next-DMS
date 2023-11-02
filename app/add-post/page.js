@@ -9,11 +9,33 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(1);
+  const [authorId, setAuthorId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
+  const [categories, setCategories] = useState([]);
+
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    setAuthorId(localStorage.getItem("userId") || "")
+    
+  }, [])
+
+  useEffect(() => {
+
+    const getCategories = async () => {
+      const res = await fetch("/api/categories");
+      const cats = await res.json();
+
+      setCategories(cats);
+
+    };
+
+    getCategories();
+  }, []);
 
   const titleEventHandler = (event) => {
     setTitle(event.target.value);
@@ -49,7 +71,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, categoryId, isPublic }),
+        body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
         
       });
 
@@ -140,23 +162,18 @@ export default function addPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                    <select className="bg-white border-black" onChange={handleCategory}>
-  <option value="" selected disabled>
-    Choose your category
-  </option>
-  <option value={1}>
-    Default
-  </option>
-  <option value={2}>
-    Resumé
-  </option>
-  <option value={3}>
-    Essay
-  </option>
-  <option value={4}>
-    Article
-  </option>
-</select>
+                      <select
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                    <option value="" selected disabled>
+                      Choose your category
+                    </option>
+                         {categories.map((cat) => (
+                            <option value={cat.categoryId}>{cat.cName}</option>
+                         ))}
+                      </select>
+
                     </div>
                   </div>
                 )}

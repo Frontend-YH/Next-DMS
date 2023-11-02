@@ -81,7 +81,10 @@ function Dms() {
 
   if(loggedIn===null) {
     docs = reversedDocs.filter(post=>{
-      // Only show posts that is set as public
+      // Only show posts that is set as public = 2
+      // 0 = private (login required)
+      // 1 = public but only for logged in users
+      // 2 = completely public (no login required)
       return post.isPublic===2;
     })
   } else {
@@ -128,21 +131,21 @@ function Dms() {
     <Main>
       
         
-        <div className="bg-white p-0 m-0">
+        <div className="bg-white p-0 m-0" style={{width: "100vw", textAlign: "center"}}>
       <button onClick={handleSort} className="bg-white w-32 text-black font-bold border-solid">
         Sort by category
       </button>
       {Object.keys(groupedCategory).map((category) => (
         <div key={category}>
           <h2>{category}</h2>
-          <ul className="flex flex-wrap items-center list-none m-10">
+          <ul className="flex flex-wrap justify-center list-none m-10">
             {groupedCategory[category].map((post) => (
               <li
               key={post.pid}
               className={`${
                 post.border
               } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
-                <div>
+                <div className="overflow-y-hidden">
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
                   </p>
@@ -157,9 +160,9 @@ function Dms() {
                       className="text-sm"
                       dangerouslySetInnerHTML={{
                         __html:
-                        post.content.length > 100
-                        ? post.content.substring(0, 80) + "..."
-                        : post.content,
+                          post.content.length > 100
+                            ? post.content.substring(0, 160) + "..."
+                            : post.content,
                       }}
                     />
                   </span>
