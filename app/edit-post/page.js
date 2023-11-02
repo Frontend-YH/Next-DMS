@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
@@ -13,8 +13,10 @@ export default function editPost() {
   const [isPublic, setIsPublic] = useState(1);
   const [authorId, setAuthorId] = useState("");
   const [lastUpdated, setLastUpdated] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState(0);
   const [categories, setCategories] = useState([]);
+
+  const selectRef = useRef(null);
 
   const router = useRouter();
 
@@ -37,6 +39,8 @@ export default function editPost() {
       if (res.ok) {
         setTitle(data[0].title);
         setContent(data[0].content);
+        //console.log(data[0].categoryId);
+        setCategoryId(data[0].categoryId);
       }
     };
     if (postId) getPost();
@@ -66,11 +70,16 @@ export default function editPost() {
     console.log(isPublic);
     
   };
+
+
+  // ############# Category Handling #################################################
   const handleCategory = (event) => {
     setCategoryId(event.target.value);
-    console.log(categoryId);
+    //console.log(categoryId);
     
   };
+// ####################################################################################
+
 
   const contentEventHandler = (event) => {
     setContent(event);
@@ -82,12 +91,14 @@ export default function editPost() {
   };
 
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
-
-    const currentTime = new Date();
+    
+     const currentTime = new Date();
     const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
 
     setLastUpdated(timeStamp);
+
     const res = await fetch("/api/posts/" + postId, {
       method: "PATCH",
       headers: {
@@ -95,11 +106,13 @@ export default function editPost() {
       },
       body: JSON.stringify({ title, content, authorId, categoryId, lastUpdated, isPublic }),
     });
-
+    
     if (res.ok) {
       router.push("/");
-    }
+    } 
+ 
   };
+  
 
   let selected = "";
 
@@ -173,20 +186,20 @@ export default function editPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                    <select
-    value={post.categoryId}
-    className="bg-white border-black"
-    onChange={handleCategory}
-  >
-    <option value="" disabled>
-      Choose your category
-    </option>
-    {categories.map((cat) => (
-      <option key={cat.categoryId} value={cat.categoryId}>
-        {cat.cName}
-      </option>
-    ))}
-  </select>
+                      <select
+                        value={categoryId}
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                        <option value="" disabled>
+                          Choose your category
+                        </option>
+                        {categories.map((cat) => (
+                          <option key={cat.categoryId} value={cat.categoryId}>
+                            {cat.cName}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 )}
