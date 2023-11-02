@@ -46,7 +46,7 @@ export default function ShowPost() {
                   readOnly={true}
                 />
                 <label className="block font-sans text-sm text-center text-gray-600 my-2">
-                  Timestamp: {post.date} (last time edited)
+                {post.lastUpdated ? new Date(post.lastUpdated).toISOString().slice(0, 19).replace('T', ' ') : 'Loading...'} (last time edited)
                 </label>
                 <div className="flex flex-row justify-around w-full">
                   <button
