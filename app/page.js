@@ -73,7 +73,7 @@ function Dms() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ postId, authorId, isFav }),
+      body: JSON.stringify({ postId, authorId }),
     });
 
     if (res.ok) {
