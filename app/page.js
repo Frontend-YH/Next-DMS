@@ -54,6 +54,25 @@ function Dms() {
       window.location.reload();
     }
   };
+  //Sort by category
+  const handleSort = () => {
+    const sortedPosts = [...reversedDocs];
+    sortedPosts.sort((a, b) => a.cName.localeCompare(b.cName));
+    setPosts(sortedPosts);
+  }
+  function groupByCategory(posts) {
+    const groupedCategory = {}
+    posts.forEach(post => {
+      const category = post.cName;
+      if (!groupedCategory[category]) {
+        groupedCategory[category] = [];
+      }
+      groupedCategory[category].push(post);
+      
+    });
+    return groupedCategory;
+  }
+  const groupedCategory=(groupByCategory(posts))
 
   // FOR SHOW
   const showClickHandler = (e) => {
