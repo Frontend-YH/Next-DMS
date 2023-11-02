@@ -108,13 +108,22 @@ function Dms() {
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
-  const loggedIn = localStorage.getItem("user");
-  const userId = localStorage.getItem("userId");
+
+  //const loggedIn = localStorage.getItem("user");
+  const loggedIn =
+    typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
+
+  //const userId = localStorage.getItem("userId");
+  const userId =
+    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
 
   if (loggedIn === null) {
     docs = reversedDocs.filter((post) => {
-      // Only show posts that is set as public
-      return post.isPublic === 1;
+      // Only show posts that is set as public = 2
+      // 0 = private (login required)
+      // 1 = public but only for logged in users
+      // 2 = completely public (no login required)
+      return post.isPublic === 2;
     });
   } else {
     docs = reversedDocs.filter((post) => {
@@ -151,15 +160,18 @@ function Dms() {
 
   return (
     <Main>
-      <div className="bg-white p-0 m-0">
+      <div
+        className="bg-white p-0 m-0"
+        style={{ width: "100vw", textAlign: "center" }}
+      >
         {posts ? (
-          <ul className="flex flex-wrap items-center list-none m-10">
+          <ul className="flex flex-wrap justify-center list-none m-10">
             {docs.map((post) => (
               <li
                 key={post.pid}
                 className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
               >
-                <div>
+                <div className="overflow-y-hidden">
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
                   </p>
@@ -175,7 +187,7 @@ function Dms() {
                       dangerouslySetInnerHTML={{
                         __html:
                           post.content.length > 100
-                            ? post.content.substring(0, 80) + "..."
+                            ? post.content.substring(0, 160) + "..."
                             : post.content,
                       }}
                     />

@@ -1,14 +1,23 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import Link from "next/link"
 //import { useRouter } from 'next/navigation';
 
 export default function Login() {
 
     const [user, setUser] = useState("")
     const [password, setPassword] = useState("")
+    const [loggedIn, setLoggedIn] = useState("");
+
+    useEffect(() => {
+        // Perform localStorage action
+        setLoggedIn(localStorage.getItem("user") || "")
+        
+      }, [])
 
     const userEventHandler = ((event) => {
-        setUser(event.target.value);
+        // Changed to to lower Case to fix bug
+        setUser(event.target.value.toLowerCase());
     }) 
 
     const passwordEventHandler = ((event) => {
@@ -58,15 +67,21 @@ export default function Login() {
         window.location.reload();
      }
 
-    const loggedIn = localStorage.getItem("user") || undefined;
+    //let loggedIn = undefined;
+
+    //loggedIn = localStorage.getItem("user");
+
+
 
     return (
 
-        <main className='bg-white p-0 m-0'>
+        <div className='bg-white p-0 m-0'>
 
              {loggedIn ? (
                 
-                <div>
+                <div className="relative flex gap-5">
+                <Link href="/add-post"><button className="bg-gray-500 hover:bg-blue-900 text-white text-sm py-2 px-4 rounded shadow-md">Create Document</button></Link>
+                <Link href="/"><button className="bg-gray-500 hover:bg-blue-900 text-white text-sm py-2 px-4 rounded shadow-md">List Documents</button></Link>
                 <p className="inline m-0 p-0 text-black mr-2">User: {loggedIn}</p> 
                 <button className="ml-4 w-16 h-7 text-xs bg-gray-500 hover:bg-blue-900 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer" onClick={handleLogout}>Logout</button>
                 </div>
@@ -75,16 +90,16 @@ export default function Login() {
          
                 <form onSubmit={handleLoginSubmit}>  
                 <label htmlFor="username" value="Login:"/> 
-                <input className="rounded-md pl-2 text-lg text-white w-32"  type="text" placeholder="username" id="username" onChange={userEventHandler}/>
+                <input className="rounded-md pl-2 text-lg w-32 autofill:shadow-[inset_0_0_0px_1000px_rgb(70,70,70)]" type="text" placeholder="username" id="username" onChange={userEventHandler}/>
                 
                 <label htmlFor="password" value="Password:"/> 
-                <input className="rounded-md pl-2 text-lg text-white w-32" type="password" placeholder="password" onChange={passwordEventHandler} style={{marginLeft: "20px"}}/>
+                <input className="rounded-md pl-2 text-lg text-white w-32 autofill:shadow-[inset_0_0_0px_1000px_rgb(70,70,70)]" type="password" placeholder="password" onChange={passwordEventHandler} style={{marginLeft: "20px"}}/>
                 <button className="ml-4 w-16 h-7 text-xs bg-gray-500 hover:bg-blue-900 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer">Login</button>
                 </form>
 
              )}
 
-             </main>
+             </div>
 
     )
   }

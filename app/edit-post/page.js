@@ -10,8 +10,18 @@ export default function editPost() {
   const [content, setContent] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
+  const [isPublic, setIsPublic] = useState(1);
+  const [authorId, setAuthorId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState([]);
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    setAuthorId(localStorage.getItem("userId") || "")
+    
+  }, [])
 
   const searchParams = useSearchParams();
   const postId = searchParams.get("pid");
@@ -31,8 +41,34 @@ export default function editPost() {
     if (postId) getPost();
   }, [postId]);
 
+
+  useEffect(() => {
+
+    const getCategories = async () => {
+      const res = await fetch("/api/categories");
+      const cats = await res.json();
+
+      setCategories(cats);
+
+    };
+
+    getCategories();
+  }, []);
+
+
   const titleEventHandler = (event) => {
     setTitle(event.target.value);
+  };
+
+  const handlePrivate = (event) => {
+    setIsPublic(event.target.checked ? 0 : 1);
+    console.log(isPublic);
+    
+  };
+  const handleCategory = (event) => {
+    setCategoryId(event.target.value);
+    console.log(categoryId);
+    
   };
 
   const contentEventHandler = (event) => {
@@ -52,13 +88,15 @@ export default function editPost() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
     });
 
     if (res.ok) {
       router.push("/");
     }
   };
+
+  let selected = "";
 
   return (
     <div className="bg-white p-0 m-0">
@@ -117,6 +155,36 @@ export default function editPost() {
                       >
                         Save changes
                       </button>
+                    </div>
+                    <div>
+                      <input
+                        className="m-5 p-5 text-center rounded-lg"
+                        type="checkbox"
+                        id="option1"
+                        name="option"
+                        value="private"
+                        onChange={handlePrivate}
+                      />
+                      <label htmlFor="option1">Make private</label>
+                    </div>
+                    <div>
+                      <select
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                        <option value="" selected disabled>
+                          Choose your category
+                        </option>
+                        {categories.map((cat) => (
+                          <option
+                            key={cat.categoryId}
+                            value={cat.categoryId}
+                            selected={post.categoryId === cat.categoryId}
+                          >
+                            {cat.cName}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 )}

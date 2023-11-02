@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
@@ -9,10 +9,33 @@ export default function addPost() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(1);
+  const [authorId, setAuthorId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
+  const [categories, setCategories] = useState([]);
+
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    setAuthorId(localStorage.getItem("userId") || "")
+    
+  }, [])
+
+  useEffect(() => {
+
+    const getCategories = async () => {
+      const res = await fetch("/api/categories");
+      const cats = await res.json();
+
+      setCategories(cats);
+
+    };
+
+    getCategories();
+  }, []);
 
   const titleEventHandler = (event) => {
     setTitle(event.target.value);
@@ -25,6 +48,11 @@ export default function addPost() {
   const handlePrivate = (event) => {
     setIsPublic(event.target.checked ? 0 : 1);
     console.log(isPublic);
+    
+  };
+  const handleCategory = (event) => {
+    setCategoryId(event.target.value);
+    console.log(categoryId);
     
   };
 
@@ -43,7 +71,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, isPublic }),
+        body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
         
       });
 
@@ -51,12 +79,17 @@ export default function addPost() {
         setTitle("");
         setContent("");
         setIsPublic(1)
+        setCategoryId("");
         router.push("/");
       }
     } else {
       alert("Fields are empty!");
     }
   };
+
+  useEffect(() => {
+    console.log(categoryId);
+  }, [categoryId]);
 
   
   return (
@@ -119,7 +152,7 @@ export default function addPost() {
                     </div>
                     <div>
                       <input
-                        className="m-5 p-5"
+                        className="m-5 p-5 text-center"
                         type="checkbox"
                         id="option1"
                         name="option"
@@ -127,6 +160,20 @@ export default function addPost() {
                         onChange={handlePrivate}
                       />
                       <label htmlFor="option1">Make private</label>
+                    </div>
+                    <div>
+                      <select
+                        className="bg-white border-black"
+                        onChange={handleCategory}
+                      >
+                    <option value="" selected disabled>
+                      Choose your category
+                    </option>
+                         {categories.map((cat) => (
+                            <option value={cat.categoryId}>{cat.cName}</option>
+                         ))}
+                      </select>
+
                     </div>
                   </div>
                 )}
