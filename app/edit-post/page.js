@@ -11,7 +11,7 @@ export default function editPost() {
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
   const [isPublic, setIsPublic] = useState(1);
-  const [authorId, setAuthorId] = useState("");
+  const [authorId, setAuthorId] = useState(1);
   const [lastUpdated, setLastUpdated] = useState("");
   const [categoryId, setCategoryId] = useState(0);
   const [categories, setCategories] = useState([]);
@@ -22,7 +22,7 @@ export default function editPost() {
 
   useEffect(() => {
     // Perform localStorage action
-    setAuthorId(localStorage.getItem("userId") || "")
+    setAuthorId(localStorage.getItem("userId") || 1)
     
   }, [])
 
@@ -93,10 +93,21 @@ export default function editPost() {
   const handleSubmit = async (event) => {
     
     event.preventDefault();
-    
-     const currentTime = new Date();
-    const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
 
+
+    //let titlex = "title KUL2";
+    //let contentx = "content xx";
+    //let authorIdx = 1;
+    //let categoryIdx = 1;
+    let lastUpdatedx = "";
+    //let isPublicx = 1;
+
+    let postIdx = 15;
+    
+    const currentTime = new Date();
+    const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
+    const lastUpdated = timeStamp;
+    
     setLastUpdated(timeStamp);
 
     const res = await fetch("/api/posts/" + postId, {
@@ -104,7 +115,8 @@ export default function editPost() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, authorId, categoryId, lastUpdated, isPublic }),
+      body: JSON.stringify({ title, content, authorId, categoryId, isPublic, lastUpdated }),
+
     });
     
     if (res.ok) {
