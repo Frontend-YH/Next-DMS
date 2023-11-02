@@ -16,11 +16,25 @@ function Dms() {
       const posts = await res.json();
 
       setPosts(posts);
-
-      console.log(posts);
     };
 
     getPost();
+  }, []);
+
+  useEffect(() => {
+    const getFavorites = async () => {
+      const res = await fetch("/api/favorites");
+      const favorites = await res.json();
+
+      const favoritesMap = {};
+      favorites.forEach((fav) => {
+        favoritesMap[fav.postId] = true;
+      });
+
+      setFavorites(favoritesMap);
+    };
+
+    getFavorites();
   }, []);
 
   const handleShow = (postId) => {
@@ -120,6 +134,19 @@ function Dms() {
       }
     });
   }
+
+  docs.sort((a, b) => {
+    const aIsFavorite = favorites[a.pid];
+    const bIsFavorite = favorites[b.pid];
+
+    if (aIsFavorite && !bIsFavorite) {
+      return -1;
+    } else if (!aIsFavorite && bIsFavorite) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
   // ##########################################################################################
 
   return (
@@ -180,8 +207,8 @@ function Dms() {
                     <button
                       className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
                         favorites[post.pid]
-                          ? "bg-red-600 text-white"
-                          : "bg-yellow-600 text-black"
+                          ? "bg-yellow-700 text-white"
+                          : "bg-yellow-200 text-black"
                       }`}
                       name={post.pid}
                       onClick={favClickHandler}
