@@ -13,15 +13,15 @@ export async function GET(req, {params}) {
 } 
 
 export async function PATCH(req, {params}) {
-    const {pid} = params;
+    const { pid } = params;
     const body = await req.json();
 
-    const {title, content, authorId, categoryId, isPublic} = body;
+    const { title, content, authorId, categoryId, isPublic, lastUpdated } = body;
 
     const result = await query({ 
-        query: "UPDATE posts SET title=?, content=?, authorId=?, categoryId=?, isPublic=? WHERE pid = ?",
-        values: [title, content, authorId, categoryId, isPublic, parseInt(pid)]
-    })
+        query: "UPDATE posts SET title=?, content=?, authorId=?, categoryId=?, isPublic=?, lastUpdated=? WHERE pid = ?",
+        values: [title, content, authorId, categoryId, isPublic, lastUpdated, parseInt(pid)]
+    }).catch(err => console.error(err));
 
     return NextResponse.json(result, {status: 200});
 }  

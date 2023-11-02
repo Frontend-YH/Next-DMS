@@ -6,6 +6,7 @@ import { format } from "date-fns";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
+  const [favorites, setFavorites] = useState({});
 
   const router = useRouter();
 
@@ -15,10 +16,24 @@ function Dms() {
       const posts = await res.json();
 
       setPosts(posts);
-
-      console.log(posts);
     };
     getPost();
+  }, []);
+
+  useEffect(() => {
+    const getFavorites = async () => {
+      const res = await fetch("/api/favorites");
+      const favorites = await res.json();
+
+      const favoritesMap = {};
+      favorites.forEach((fav) => {
+        favoritesMap[fav.postId] = true;
+      });
+
+      setFavorites(favoritesMap);
+    };
+
+    getFavorites();
   }, []);
 
   const handleShow = (postId) => {
@@ -61,77 +76,95 @@ function Dms() {
     return formattedDate;
   }
 
+  const favClickHandler = async (e) => {
+    const postId = parseInt(e.target.name);
+    const authorId = parseInt(userId);
+
+    const res = await fetch("/api/favorites/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, authorId }),
+    });
+
+    if (res.ok) {
+      setFavorites((prevFavorites) => ({
+        ...prevFavorites,
+        [postId]: !prevFavorites[postId],
+      }));
+    }
+  };
+
   // Show the latest edited/created document at the top
   const reversedDocs = posts.slice().reverse();
 
   // Default 0 border on posts
-  reversedDocs.map(post=>{
-      post.border = "border-0"
-  })
+  reversedDocs.map((post) => {
+    post.border = "border-0";
+  });
 
   // #######################################################################################
   // ########### Filter POSTS based on logged in user ######################################
   let docs = [];
 
-  //const loggedIn = localStorage.getItem("user"); 
-  const loggedIn = typeof localStorage !== 'undefined' ? localStorage.getItem("user") : null;
+  //const loggedIn = localStorage.getItem("user");
+  const loggedIn =
+    typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
 
   //const userId = localStorage.getItem("userId");
-  const userId = typeof localStorage !== 'undefined' ? localStorage.getItem("userId") : null;
+  const userId =
+    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
 
-  if(loggedIn===null) {
-    docs = reversedDocs.filter(post=>{
+  if (loggedIn === null) {
+    docs = reversedDocs.filter((post) => {
       // Only show posts that is set as public = 2
       // 0 = private (login required)
       // 1 = public but only for logged in users
       // 2 = completely public (no login required)
-      return post.isPublic===2;
-    })
-  } else {
-    docs = reversedDocs.filter(post=>{
-      // Only show posts that is set as private but belongs to the user AND public posts
-      return (post.isPublic===0 && post.userName===loggedIn) || post.isPublic===1;
-    })
-
-    docs.map(post=>{
-      if (post.userName===loggedIn) { 
-        post.border = "border-2 border-green-500"
-       }
-       if (post.userName===loggedIn && post.isPublic===0) { 
-        post.border = "border-2 border-red-500"
-       }
-    })
-
-  }
-// ##########################################################################################
-  
-  const handleSort = () => {
-    const sortedPosts = [...reversedDocs];
-
-    sortedPosts.sort((a, b) => a.cName.localeCompare(b.cName));
-
-    setPosts(sortedPosts);
-
-  }
-  function groupByCategory(posts) {
-    const groupedCategory = {}
-    posts.forEach(post => {
-      const category = post.cName;
-      if (!groupedCategory[category]) {
-        groupedCategory[category] = [];
-      }
-      groupedCategory[category].push(post);
-      
+      return post.isPublic === 2;
     });
-    return groupedCategory;
+  } else {
+    docs = reversedDocs.filter((post) => {
+      // Only show posts that is set as private but belongs to the user AND public posts
+      return (
+        (post.isPublic === 0 && post.userName === loggedIn) ||
+        post.isPublic === 1
+      );
+    });
+
+    docs.map((post) => {
+      if (post.userName === loggedIn) {
+        post.border = "border-2 border-green-500";
+      }
+      if (post.userName === loggedIn && post.isPublic === 0) {
+        post.border = "border-2 border-red-500";
+      }
+    });
   }
-  const groupedCategory=(groupByCategory(posts))
+
+  docs.sort((a, b) => {
+    const aIsFavorite = favorites[a.pid];
+    const bIsFavorite = favorites[b.pid];
+
+    if (aIsFavorite && !bIsFavorite) {
+      return -1;
+    } else if (!aIsFavorite && bIsFavorite) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+  // ##########################################################################################
 
   return (
     <Main>
       
         
-        <div className="bg-white p-0 m-0" style={{width: "100vw", textAlign: "center"}}>
+        <div
+        className="bg-white p-0 m-0"
+        style={{ width: "100vw", textAlign: "center" }}
+      >
       <button onClick={handleSort} className="bg-white w-32 text-black font-bold border-solid">
         Sort by category
       </button>
@@ -141,10 +174,9 @@ function Dms() {
           <ul className="flex flex-wrap justify-center list-none m-10">
             {groupedCategory[category].map((post) => (
               <li
-              key={post.pid}
-              className={`${
-                post.border
-              } flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}>
+                key={post.pid}
+                className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
+              >
                 <div className="overflow-y-hidden">
                   <p className="block pb-3 font-sans text-xl text-black">
                     {post.authorName}
@@ -168,40 +200,51 @@ function Dms() {
                   </span>
                 
                 </div>
-                {(post.userName===loggedIn) ? (
-                <div className="flex flex-row justify-around w-full space-x-4">
-                  <button
-                    className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={editClickHandler}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={showClickHandler}
-                  >
-                    Open
-                  </button>
-                  <button
-                    className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={deleteClickHandler}
-                  >
-                    Delete
-                  </button>
-                </div>
-                ) : ( 
-                <div className="flex flex-row justify-around w-full space-x-4">
-                  <button
-                    className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                    name={post.pid}
-                    onClick={showClickHandler}
-                  >
-                    Open
-                  </button>
-                </div> 
+                {post.userName === loggedIn ? (
+                  <div className="flex flex-row justify-around w-full space-x-4">
+                    <button
+                      className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={editClickHandler}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={showClickHandler}
+                    >
+                      Open
+                    </button>
+                    <button
+                      className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={deleteClickHandler}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
+                        favorites[post.pid]
+                          ? "bg-yellow-700 text-white"
+                          : "bg-yellow-200 text-black"
+                      }`}
+                      name={post.pid}
+                      onClick={favClickHandler}
+                    >
+                      Favorite
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-row justify-around w-full space-x-4">
+                    <button
+                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                      name={post.pid}
+                      onClick={showClickHandler}
+                    >
+                      Open
+                    </button>
+                  </div>
                 )}
               </li>
             ))}

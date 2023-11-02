@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import QEditor from "@/components/QEditor";
 import ReactQuill from "react-quill";
@@ -11,15 +11,18 @@ export default function editPost() {
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
   const [isPublic, setIsPublic] = useState(1);
-  const [authorId, setAuthorId] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [authorId, setAuthorId] = useState(1);
+  const [lastUpdated, setLastUpdated] = useState("");
+  const [categoryId, setCategoryId] = useState(0);
   const [categories, setCategories] = useState([]);
+
+  const selectRef = useRef(null);
 
   const router = useRouter();
 
   useEffect(() => {
     // Perform localStorage action
-    setAuthorId(localStorage.getItem("userId") || "")
+    setAuthorId(localStorage.getItem("userId") || 1)
     
   }, [])
 
@@ -36,6 +39,8 @@ export default function editPost() {
       if (res.ok) {
         setTitle(data[0].title);
         setContent(data[0].content);
+        //console.log(data[0].categoryId);
+        setCategoryId(data[0].categoryId);
       }
     };
     if (postId) getPost();
@@ -65,11 +70,16 @@ export default function editPost() {
     console.log(isPublic);
     
   };
+
+
+  // ############# Category Handling #################################################
   const handleCategory = (event) => {
     setCategoryId(event.target.value);
-    console.log(categoryId);
+    //console.log(categoryId);
     
   };
+// ####################################################################################
+
 
   const contentEventHandler = (event) => {
     setContent(event);
@@ -81,20 +91,40 @@ export default function editPost() {
   };
 
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
+
+
+    //let titlex = "title KUL2";
+    //let contentx = "content xx";
+    //let authorIdx = 1;
+    //let categoryIdx = 1;
+    let lastUpdatedx = "";
+    //let isPublicx = 1;
+
+    let postIdx = 15;
+    
+    const currentTime = new Date();
+    const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
+    const lastUpdated = timeStamp;
+    
+    setLastUpdated(timeStamp);
 
     const res = await fetch("/api/posts/" + postId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
-    });
+      body: JSON.stringify({ title, content, authorId, categoryId, isPublic, lastUpdated }),
 
+    });
+    
     if (res.ok) {
       router.push("/");
-    }
+    } 
+ 
   };
+  
 
   let selected = "";
 
@@ -169,18 +199,15 @@ export default function editPost() {
                     </div>
                     <div>
                       <select
+                        value={categoryId}
                         className="bg-white border-black"
                         onChange={handleCategory}
                       >
-                        <option value="" selected disabled>
+                        <option value="" disabled>
                           Choose your category
                         </option>
                         {categories.map((cat) => (
-                          <option
-                            key={cat.categoryId}
-                            value={cat.categoryId}
-                            selected={post.categoryId === cat.categoryId}
-                          >
+                          <option key={cat.categoryId} value={cat.categoryId}>
                             {cat.cName}
                           </option>
                         ))}

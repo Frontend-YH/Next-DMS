@@ -11,6 +11,7 @@ export default function addPost() {
   const [isPublic, setIsPublic] = useState(1);
   const [authorId, setAuthorId] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [lastUpdated, setLastUpdated] = useState("");
   const [post, setPost] = useState({});
   const [preview, setPreview] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -64,6 +65,11 @@ export default function addPost() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const currentTime = new Date();
+    const timeStamp = currentTime.toISOString().slice(0, 19).replace('T', ' ');
+    
+    console.log(timeStamp);
+    setLastUpdated(timeStamp);
     // Double check that the fields are not empty
     if (title !== "" && content !== "") {
       const res = await fetch("/api/posts", {
@@ -71,7 +77,7 @@ export default function addPost() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, content, authorId, categoryId, isPublic }),
+        body: JSON.stringify({ title, content, authorId, categoryId, lastUpdated, isPublic }),
         
       });
 
@@ -80,6 +86,7 @@ export default function addPost() {
         setContent("");
         setIsPublic(1)
         setCategoryId("");
+        setLastUpdated("");
         router.push("/");
       }
     } else {
@@ -162,19 +169,21 @@ export default function addPost() {
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
-                      <select
-                        className="bg-white border-black"
-                        onChange={handleCategory}
-                      >
-                    <option value="" selected disabled>
-                      Choose your category
-                    </option>
-                         {categories.map((cat) => (
-                            <option value={cat.categoryId}>{cat.cName}</option>
-                         ))}
-                      </select>
-
-                    </div>
+  <select
+    value={categoryId} 
+    className="bg-white border-black"
+    onChange={handleCategory}
+  >
+    <option value="" disabled>
+      Choose your category
+    </option>
+    {categories.map((cat) => (
+      <option key={cat.categoryId} value={cat.categoryId}>
+        {cat.cName}
+      </option>
+    ))}
+  </select>
+</div>
                   </div>
                 )}
               </li>
