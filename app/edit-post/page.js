@@ -94,14 +94,6 @@ export default function editPost() {
     
     event.preventDefault();
 
-
-    //let titlex = "title KUL2";
-    //let contentx = "content xx";
-    //let authorIdx = 1;
-    //let categoryIdx = 1;
-    //let lastUpdatedx = "";
-    //let isPublicx = 1;
-
     let postIdx = 15;
     
     const currentTime = new Date();
