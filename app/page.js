@@ -7,6 +7,7 @@ import { format } from "date-fns";
 function Dms() {
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState({});
+  const [expandedCategory,setExpandedCategory]=useState(null)
 
   const router = useRouter();
 
@@ -184,17 +185,29 @@ function Dms() {
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
       >
-      <button onClick={handleSort} className="bg-white w-32 text-black font-bold border-solid">
+        {posts ? (
+          <div>
+
+      <button onClick={handleSort} className="bg-cyan w-32 text-black font-bold border-solid border-black">
         Sort by category
-      </button>
+          </button>
+         
       {Object.keys(groupedCategory).map((category) => (
         <div key={category}>
-          <h2>{category}</h2>
-          <ul className="flex flex-wrap justify-center list-none m-10">
+          <h2 onClick={() => {
+            if (expandedCategory===category) {
+              setExpandedCategory(null)
+            } else {
+              setExpandedCategory(category)
+            }
+          }}>{category}</h2>
+          {expandedCategory===category && (
+            
+            <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
             {groupedCategory[category].map((post) => (
               <li
-                key={post.pid}
-                className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
+              key={post.pid}
+              className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
               >
                 <div className="overflow-y-hidden">
                   <p className="block pb-3 font-sans text-xl text-black">
@@ -211,11 +224,11 @@ function Dms() {
                       className="text-sm"
                       dangerouslySetInnerHTML={{
                         __html:
-                          post.content.length > 100
-                            ? post.content.substring(0, 160) + "..."
-                            : post.content,
+                        post.content.length > 100
+                        ? post.content.substring(0, 160) + "..."
+                        : post.content,
                       }}
-                    />
+                      />
                   </span>
                 
                 </div>
@@ -225,33 +238,34 @@ function Dms() {
                       className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
                       name={post.pid}
                       onClick={editClickHandler}
-                    >
+                      >
                       Edit
                     </button>
                     <button
                       className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
                       name={post.pid}
                       onClick={showClickHandler}
-                    >
+                      >
                       Open
                     </button>
                     <button
                       className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
                       name={post.pid}
                       onClick={deleteClickHandler}
-                    >
+                      >
                       Delete
                     </button>
                     <button
                       className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
                         favorites[post.pid]
-                          ? "bg-yellow-700 text-white"
-                          : "bg-yellow-200 text-black"
+                        ? "bg-yellow-700 text-white"
+                        : "bg-yellow-200 text-black"
                       }`}
                       name={post.pid}
                       onClick={favClickHandler}
-                    >
+                      >
                       Favorite
+                    
                     </button>
                   </div>
                 ) : (
@@ -260,16 +274,23 @@ function Dms() {
                       className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
                       name={post.pid}
                       onClick={showClickHandler}
-                    >
+                      >
                       Open
                     </button>
                   </div>
                 )}
               </li>
             ))}
-          </ul>
-        </div>
+            </ul>
+            )}
+
+            </div>
       ))}
+      </div>
+      ):(
+      <div>Loading..</div>
+       )}
+            
     </div>
   </Main>
 
