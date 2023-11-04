@@ -41,6 +41,7 @@ export default function editPost() {
         setContent(data[0].content);
         //console.log(data[0].categoryId);
         setCategoryId(data[0].categoryId);
+        setIsPublic(data[0].isPublic)
       }
     };
     if (postId) getPost();
@@ -178,15 +179,28 @@ export default function editPost() {
                         Save changes
                       </button>
                     </div>
-                    <div>
-                      <input
-                        className="m-5 p-5 text-center rounded-lg"
-                        type="checkbox"
-                        id="option1"
-                        name="option"
-                        value="private"
-                        onChange={handlePrivate}
-                      />
+                      <div>
+                        {isPublic === 0 ?(
+                          
+                          <input
+                            className="m-5 p-5 text-center rounded-lg"
+                            type="checkbox"
+                            id="option1"
+                            name="option"
+                            value="private"
+                            checked="true"
+                            onChange={handlePrivate}
+                          />
+                        ) :(
+                          <input
+                            className="m-5 p-5 text-center rounded-lg"
+                            type="checkbox"
+                            id="option1"
+                            name="option"
+                            value="private"
+                            onChange={handlePrivate}
+                          />
+                        )}
                       <label htmlFor="option1">Make private</label>
                     </div>
                     <div>
