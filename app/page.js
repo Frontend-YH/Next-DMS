@@ -30,7 +30,7 @@ function Dms() {
       favorites.forEach((fav) => {
         favoritesMap[fav.postId] = true;
       });
-
+      
       setFavorites(favoritesMap);
     };
 
