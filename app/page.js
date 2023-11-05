@@ -7,7 +7,7 @@ import { format } from "date-fns";
 function Dms() {
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState({});
-  const [expandedCategory,setExpandedCategory]=useState("View all")
+  const [expandedCategory, setExpandedCategory] = useState("View all");
 
   const router = useRouter();
 
@@ -30,7 +30,7 @@ function Dms() {
       favorites.forEach((fav) => {
         favoritesMap[fav.postId] = true;
       });
-      
+
       setFavorites(favoritesMap);
     };
 
@@ -56,20 +56,19 @@ function Dms() {
     }
   };
   //Sort by category
-  
+
   function groupByCategory(posts) {
-    const groupedCategory = {}
-    posts.forEach(post => {
+    const groupedCategory = {};
+    posts.forEach((post) => {
       const category = post.cName;
       if (!groupedCategory[category]) {
         groupedCategory[category] = [];
       }
       groupedCategory[category].push(post);
-      
     });
     return groupedCategory;
   }
-  const groupedCategory=(groupByCategory(posts))
+  const groupedCategory = groupByCategory(posts);
 
   // FOR SHOW
   const showClickHandler = (e) => {
@@ -175,202 +174,218 @@ function Dms() {
 
   return (
     <Main>
-      
-        
-        <div
+      <div
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
       >
         {posts ? (
           <div>
+            {loggedIn && (
+              <div>
+                <label className="w-32 text-black font-bold ">
+                  Sort by category
+                </label>
+                <select
+                  className="ml-10"
+                  onChange={(e) => setExpandedCategory(e.target.value)}
+                >
+                  <option key="" value="View all">
+                    View all
+                  </option>
+                  {Object.keys(groupedCategory).map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-      <label className="w-32 text-black font-bold ">
-        Sort by category
-            </label>
-         
-            <select className="ml-10" onChange={(e) => setExpandedCategory(e.target.value)}>
-              <option key="" value="View all">View all</option>
-              {Object.keys(groupedCategory).map((c) =>
-                <option key={c} value={c}>{c}</option>
-              )}
-              </select>
-      
-          
-          {expandedCategory === "View all"? (
-             <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
-              {docs.map((post) => (
-              <li
-              key={post.pid}
-              className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
-              >
-                <div className="overflow-y-hidden">
-                  <p className="block pb-3 font-sans text-xl text-black">
-                    {post.authorName}
-                  </p>
-                  <span className="block pb-3 font-sans text-xl text-black">
-                    {post.title.length > 20
-                      ? post.title.substring(0, 20) + "..."
-                      : post.title}
-                    <p className="text-sm my-1 font-semibold">
-                      {formatTimestamp(post.lastUpdated)}
-                    </p>
-                    <p
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{
-                        __html:
-                        post.content.length > 100
-                        ? post.content.substring(0, 160) + "..."
-                        : post.content,
-                      }}
-                      />
-                  </span>
-                
-                </div>
-                {post.userName === loggedIn ? (
-                  <div className="flex flex-row justify-around w-full space-x-4">
-                    <button
-                      className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={editClickHandler}
-                      >
-                      Edit
-                    </button>
-                    <button
-                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={showClickHandler}
-                      >
-                      Open
-                    </button>
-                    <button
-                      className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={deleteClickHandler}
-                      >
-                      Delete
-                    </button>
-                    <button
-                      className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
-                        favorites[post.pid]
-                        ? "bg-yellow-700 text-white"
-                        : "bg-yellow-200 text-black"
-                      }`}
-                      name={post.pid}
-                      onClick={favClickHandler}
-                      >
-                      Favorite
-                    
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-row justify-around w-full space-x-4">
-                    <button
-                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={showClickHandler}
-                      >
-                      Open
-                    </button>
-                  </div>
-                )}
-              </li>
-            ))}
-            </ul>
+            {expandedCategory === "View all" ? (
+              <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
+                {docs.map((post) => (
+                  <li
+                    key={post.pid}
+                    className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
+                  >
+                    <div className="overflow-y-hidden">
+                      <p className="block pb-3 font-sans text-xl text-black">
+                        {post.authorName}
+                      </p>
+                      <span className="block pb-3 font-sans text-xl text-black">
+                        {post.title.length > 20
+                          ? post.title.substring(0, 20) + "..."
+                          : post.title}
+                        <p className="text-sm my-1 font-semibold">
+                          {formatTimestamp(post.lastUpdated)}
+                        </p>
+                        <p
+                          className="text-sm"
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              post.content.length > 100
+                                ? post.content.substring(0, 160) + "..."
+                                : post.content,
+                          }}
+                        />
+                      </span>
+                    </div>
+                    {post.userName === loggedIn ? (
+                      <div className="flex flex-row justify-around w-full space-x-4">
+                        <button
+                          className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                          name={post.pid}
+                          onClick={editClickHandler}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                          name={post.pid}
+                          onClick={showClickHandler}
+                        >
+                          Open
+                        </button>
+                        <button
+                          className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                          name={post.pid}
+                          onClick={deleteClickHandler}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
+                            favorites[post.pid]
+                              ? "bg-yellow-700 text-white"
+                              : "bg-yellow-200 text-black"
+                          }`}
+                          name={post.pid}
+                          onClick={favClickHandler}
+                        >
+                          Favorite
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-row justify-around w-full space-x-4">
+                        <button
+                          className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                          name={post.pid}
+                          onClick={showClickHandler}
+                        >
+                          Open
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
             ) : (
-          <div >
-            {Object.keys(groupedCategory).map((category) => (
-              <div key={category} className={`${expandedCategory===category ? 'relative z-10':'absolute z-0'}`}>
-            <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
-              {groupedCategory[category].filter((post) => {console.log("Expanded Category:", expandedCategory); return expandedCategory === "" || expandedCategory === "View all" || post.cName === expandedCategory }).map((post) => (
-              <li
-              key={post.pid}
-              className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
-              >
-                <div className="overflow-y-hidden">
-                  <p className="block pb-3 font-sans text-xl text-black">
-                    {post.authorName}
-                  </p>
-                  <span className="block pb-3 font-sans text-xl text-black">
-                    {post.title.length > 20
-                      ? post.title.substring(0, 20) + "..."
-                      : post.title}
-                    <p className="text-sm my-1 font-semibold">
-                      {formatTimestamp(post.lastUpdated)}
-                    </p>
-                    <p
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{
-                        __html:
-                        post.content.length > 100
-                        ? post.content.substring(0, 160) + "..."
-                        : post.content,
-                      }}
-                      />
-                  </span>
-                
-                </div>
-                {post.userName === loggedIn ? (
-                  <div className="flex flex-row justify-around w-full space-x-4">
-                    <button
-                      className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={editClickHandler}
-                      >
-                      Edit
-                    </button>
-                    <button
-                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={showClickHandler}
-                      >
-                      Open
-                    </button>
-                    <button
-                      className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={deleteClickHandler}
-                      >
-                      Delete
-                    </button>
-                    <button
-                      className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
-                        favorites[post.pid]
-                        ? "bg-yellow-700 text-white"
-                        : "bg-yellow-200 text-black"
-                      }`}
-                      name={post.pid}
-                      onClick={favClickHandler}
-                      >
-                      Favorite
-                    
-                    </button>
+              <div>
+                {Object.keys(groupedCategory).map((category) => (
+                  <div
+                    key={category}
+                    className={`${
+                      expandedCategory === category
+                        ? "relative z-10"
+                        : "absolute z-0"
+                    }`}
+                  >
+                    <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
+                      {groupedCategory[category]
+                        .filter((post) => {
+                          console.log("Expanded Category:", expandedCategory);
+                          return (
+                            expandedCategory === "" ||
+                            expandedCategory === "View all" ||
+                            post.cName === expandedCategory
+                          );
+                        })
+                        .map((post) => (
+                          <li
+                            key={post.pid}
+                            className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
+                          >
+                            <div className="overflow-y-hidden">
+                              <p className="block pb-3 font-sans text-xl text-black">
+                                {post.authorName}
+                              </p>
+                              <span className="block pb-3 font-sans text-xl text-black">
+                                {post.title.length > 20
+                                  ? post.title.substring(0, 20) + "..."
+                                  : post.title}
+                                <p className="text-sm my-1 font-semibold">
+                                  {formatTimestamp(post.lastUpdated)}
+                                </p>
+                                <p
+                                  className="text-sm"
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      post.content.length > 100
+                                        ? post.content.substring(0, 160) + "..."
+                                        : post.content,
+                                  }}
+                                />
+                              </span>
+                            </div>
+                            {post.userName === loggedIn ? (
+                              <div className="flex flex-row justify-around w-full space-x-4">
+                                <button
+                                  className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                                  name={post.pid}
+                                  onClick={editClickHandler}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                                  name={post.pid}
+                                  onClick={showClickHandler}
+                                >
+                                  Open
+                                </button>
+                                <button
+                                  className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                                  name={post.pid}
+                                  onClick={deleteClickHandler}
+                                >
+                                  Delete
+                                </button>
+                                <button
+                                  className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
+                                    favorites[post.pid]
+                                      ? "bg-yellow-700 text-white"
+                                      : "bg-yellow-200 text-black"
+                                  }`}
+                                  name={post.pid}
+                                  onClick={favClickHandler}
+                                >
+                                  Favorite
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-row justify-around w-full space-x-4">
+                                <button
+                                  className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
+                                  name={post.pid}
+                                  onClick={showClickHandler}
+                                >
+                                  Open
+                                </button>
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                    </ul>
                   </div>
-                ) : (
-                  <div className="flex flex-row justify-around w-full space-x-4">
-                    <button
-                      className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                      name={post.pid}
-                      onClick={showClickHandler}
-                      >
-                      Open
-                    </button>
-                  </div>
-                )}
-              </li>
-            ))}
-            </ul>
-           </div> 
-      ))}
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>Loading..</div>
+        )}
       </div>
-      )}
-  </div>
-      ):(
-      <div>Loading..</div>
-       )}
-            
-    </div>
-  </Main>
-
+    </Main>
   );
 }
 
