@@ -13,37 +13,29 @@ export async function GET(req, {params}) {
 } 
 
 export async function PATCH(req, {params}) {
-    const {pid} = params;
+    const { pid } = params;
     const body = await req.json();
 
-    const {title, content, authorId, categoryId, isPublic} = body;
+    const { title, content, authorId, categoryId, isPublic, lastUpdated } = body;
 
     const result = await query({ 
-        query: "UPDATE posts SET title=?, content=?, authorId=?, categoryId=?, isPublic=? WHERE pid = ?",
-        values: [title, content, authorId, categoryId, isPublic, parseInt(pid)]
-    })
+        query: "UPDATE posts SET title=?, content=?, authorId=?, categoryId=?, isPublic=?, lastUpdated=? WHERE pid = ?",
+        values: [title, content, authorId, categoryId, isPublic, lastUpdated, parseInt(pid)]
+    }).catch(err => console.error(err));
 
     return NextResponse.json(result, {status: 200});
 }  
 
 export async function DELETE(req, {params}) {
 
-    const {pid} = params;
+    const { pid } = params;
 
-    // HARD DELETE (default)
-    const result = await query({ 
-        query: "DELETE FROM posts WHERE pid=?",
-        values: [parseInt(pid)]
-    })
-
-   /* // SOFT DELETE om vi föredrar det
-      // T ex om vi vill ha en Papperskorg man kan tömma eller återställa DELETES från
-    const result = await query({ 
-        query: "UPDATE posts SET deleted=? WHERE pid = ?",
-        values: [1, parseInt(pid)]
-    })
-    */
-
-    return NextResponse.json(result, {status: 200});
+    const isDeleted = 1;
     
-} 
+    const result = await query({ 
+        query: "UPDATE posts SET isDeleted=? WHERE pid = ?",
+        values: [isDeleted, parseInt(pid)]
+    }).catch(err => console.error(err));
+    
+    return NextResponse.json(result, {status: 200});
+    }
