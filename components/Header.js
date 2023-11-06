@@ -1,13 +1,18 @@
-import Link from "next/link"
-import Login from './Login';
+"use client";
+import Link from "next/link";
+import UserStatus from "./UserStatus";
 
 export default function Header() {
-
   return (
-    <header className="relative flex flex-wrap gap-5 items-center justify-center p-5 bg-white border border-gray-400 mb-5">
-      <Link href="/"><h1 className="text-7xl font-bold text-gray-700 text-center tracking-widest">Next DMS</h1></Link>
-        <Login/>
-
+    <header className="flex flex-wrap items-center justify-center p-5 bg-white border-b border-gray-500">
+      <Link href="/">
+        <h1 className="sm:text-7xl text-5xl font-bold text-gray-700 md:ml-20 ml-0">
+          Next DMS
+        </h1>
+      </Link>
+      <div className="ml-auto md:mr-20 mr-0">
+        <UserStatus />
+      </div>
     </header>
   );
 }

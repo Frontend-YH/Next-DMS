@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Main from "@/components/Main";
 import "./globals.css";
+import Login from "@/components/Login";
 //import Link from 'next/link';
 
 export const metadata = {
@@ -14,6 +15,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Header />
+
+        <Login />
 
         <Main>{children}</Main>
 
