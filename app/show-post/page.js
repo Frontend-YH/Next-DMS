@@ -10,6 +10,7 @@ export default function ShowPost() {
   const [post, setPost] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const postId = searchParams.get("pid");
@@ -30,6 +31,7 @@ export default function ShowPost() {
       if (res.ok) {
         setContent(data[0].content);
       }
+      setIsLoading(false);
     };
     if (postId) getPost();
   }, [postId]);
@@ -41,6 +43,10 @@ export default function ShowPost() {
   useEffect(() => {
     setIsLoggedIn(checkUser());
   }, []);
+
+  if (isLoading) { 
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-white p-0 m-0">
