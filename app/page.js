@@ -4,11 +4,13 @@ import Main from "@/components/Main";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import DocumentButtons from "@/components/DocumentButtons";
+import React, { useMemo } from "react";
 
 function Dms() {
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState({});
   const [expandedCategory, setExpandedCategory] = useState("View all");
+  const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
 
   const router = useRouter();
 
@@ -59,17 +61,13 @@ function Dms() {
   //Sort by category
 
   function groupByCategory(posts) {
-    const groupedCategory = {};
-    posts.forEach((post) => {
-      const category = post.cName;
-      if (!groupedCategory[category]) {
-        groupedCategory[category] = [];
-      }
-      groupedCategory[category].push(post);
-    });
-    return groupedCategory;
+    return posts.reduce((acc, post) => {
+      const { cName: category } = post;
+      acc[category] = acc[category] || [];
+      acc[category].push(post);
+      return acc;
+    }, {});
   }
-  const groupedCategory = groupByCategory(posts);
 
   // FOR SHOW
   const showClickHandler = (e) => {
@@ -171,6 +169,13 @@ function Dms() {
       return 0;
     }
   });
+
+  const filteredDocs = useMemo(() => {
+    if (expandedCategory === "View all" || !groupedCategory[expandedCategory]) {
+      return docs;
+    }
+    return groupedCategory[expandedCategory];
+  }, [expandedCategory, groupedCategory, docs]);
   // ##########################################################################################
 
   return (
@@ -181,218 +186,122 @@ function Dms() {
       >
         {posts ? (
           <div>
-            {loggedIn && (
-              <div className="flex justify-between items-center md:mr-32 mr-2 md:ml-32 ml-2 mt-5">
-                <div>
-                  <label className="w-32 text-black font-semibold ">
-                    Sort by category:
-                  </label>
-                  <select
-                    className="md:ml-5"
-                    onChange={(e) => setExpandedCategory(e.target.value)}
-                  >
-                    <option key="" value="View all">
-                      View all
-                    </option>
-                    {Object.keys(groupedCategory).map((c) => (
-                      <option key={c} value={c}>
-                        {c}
+            <div className="flex flex-col-reverse md:flex-row justify-center items-center md:justify-between md:mr-32 mr-2 md:ml-32 ml-2 mt-5">
+              {loggedIn && (
+                <>
+                  <div className="md:mb-0 mb-0 mt-6 md:mt-0">
+                    <label className="w-32 text-black font-semibold">
+                      Sort by category:
+                    </label>
+                    <select
+                      className="md:ml-5 ml-0"
+                      onChange={(e) => setExpandedCategory(e.target.value)}
+                    >
+                      <option key="" value="View all">
+                        View all
                       </option>
-                    ))}
-                  </select>
-                </div>
-                {loggedIn && <DocumentButtons />}
-              </div>
-            )}
+                      {Object.keys(groupedCategory).map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <DocumentButtons />
+                </>
+              )}
+            </div>
 
-            {expandedCategory === "View all" ? (
-              <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
-                {docs.map((post) => (
-                  <li
-                    key={post.pid}
-                    className={`${post.border} border-gray-200 border-2 relative flex flex-col justify-between w-56 h-auto my-2 p-3 rounded bg-white shadow-sm m-2`}
-                  >
-                    {post.userName === loggedIn && (
-                      <button
-                        className={`absolute top-0 left-0 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer 
-    ${
-      favorites[post.pid]
-        ? "bg-yellow-600 hover:bg-gray-500"
-        : "bg-gray-500 hover:bg-yellow-600"
-    }`}
-                        name={post.pid}
-                        onClick={favClickHandler}
-                      >
-                        ★
-                      </button>
-                    )}
-                    {post.userName === loggedIn && post.isPublic === 0 && (
-                      <button
-                        className="absolute top-0 left-8 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center bg-red-500 text-white"
-                        disabled
-                      >
-                        P
-                      </button>
-                    )}
-                    {post.userName === loggedIn && (
-                      <button
-                        className="absolute top-0 right-0 m-2 text-xs bg-gray-600 hover:bg-gray-900 text-white border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
-                        name={post.pid}
-                        onClick={deleteClickHandler}
-                      >
-                        X
-                      </button>
-                    )}
-                    <div className="overflow-hidden h-40 mb-4 text-left">
-                      <h2 className="font-sans text-md text-black font-semibold mt-8 truncate">
-                        {post.title}
-                      </h2>
-                      <p
-                        className="text-xs text-gray-700 truncate"
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            post.content.length > 200
-                              ? post.content.substring(0, 200) + "..."
-                              : post.content,
-                        }}
-                      ></p>
-                    </div>
-                    <div className="mb-4 text-left">
-                      <span className="text-xs font-medium text-gray-600">
-                        {post.authorName}
-                      </span>
-                      <span className="text-xs font-medium text-gray-600">
-                        {" "}
-                        - {formatTimestamp(post.lastUpdated)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <button
-                        className="text-xs bg-blue-600 hover:bg-blue-900 text-white border-0 rounded-md w-20 h-8 px-2 cursor-pointer"
-                        name={post.pid}
-                        onClick={showClickHandler}
-                      >
-                        Open
-                      </button>
+            <ul className="flex flex-wrap justify-center list-none md:mt-10 mt-5 transition-all ease-in duration-300">
+              {loggedIn ? (
+                filteredDocs.length > 0 ? (
+                  filteredDocs.map((post) => (
+                    <li
+                      key={post.pid}
+                      className={`${post.border} border-gray-200 border-2 relative flex flex-col justify-between w-2/5 md:w-56 h-auto my-2 p-3 rounded bg-white shadow-sm m-2`}
+                    >
                       {post.userName === loggedIn && (
-                        <div className="flex space-x-2">
+                        <>
                           <button
-                            className="text-xs bg-green-600 hover:bg-green-900 text-white border-0 rounded-md w-20 h-8 px-2 cursor-pointer"
+                            className={`absolute top-0 left-0 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer ${
+                              favorites[post.pid]
+                                ? "bg-yellow-600 hover:bg-gray-500"
+                                : "bg-gray-500 hover:bg-yellow-600"
+                            }`}
+                            name={post.pid}
+                            onClick={favClickHandler}
+                          >
+                            ★
+                          </button>
+                          <button
+                            className="absolute top-0 right-0 m-2 text-xs bg-gray-600 hover:bg-gray-900 text-white border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+                            name={post.pid}
+                            onClick={deleteClickHandler}
+                          >
+                            X
+                          </button>
+                          {post.isPublic === 0 && (
+                            <button
+                              className="absolute top-0 left-8 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center bg-red-500 text-white"
+                              disabled
+                            >
+                              P
+                            </button>
+                          )}
+                        </>
+                      )}
+                      <div className="overflow-hidden h-40 mb-4 text-left">
+                        <h2 className="font-sans text-md text-black font-semibold mt-8 truncate">
+                          {post.title}
+                        </h2>
+                        <p
+                          className="text-xs text-gray-700 truncate"
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              post.content.length > 200
+                                ? post.content.substring(0, 200) + "..."
+                                : post.content,
+                          }}
+                        ></p>
+                      </div>
+                      <div className="mb-4 text-left">
+                        <span className="text-xs font-medium text-gray-600">
+                          {post.authorName}
+                        </span>
+                        <span className="text-xs font-medium text-gray-600">
+                          - {formatTimestamp(post.lastUpdated)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <button
+                          className="text-xs bg-blue-600 hover:bg-blue-900 text-white border-0 rounded md:w-20 w-14 h-8 px-2 cursor-pointer"
+                          name={post.pid}
+                          onClick={showClickHandler}
+                        >
+                          Open
+                        </button>
+                        {post.userName === loggedIn && (
+                          <button
+                            className="text-xs bg-green-600 hover:bg-green-900 text-white border-0 rounded md:w-20 w-14 h-8 px-2 cursor-pointer"
                             name={post.pid}
                             onClick={editClickHandler}
                           >
                             Edit
                           </button>
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div>
-                {Object.keys(groupedCategory).map((category) => (
-                  <div
-                    key={category}
-                    className={`${
-                      expandedCategory === category
-                        ? "relative z-10"
-                        : "absolute z-0"
-                    }`}
-                  >
-                    <ul className="flex flex-wrap justify-center list-none m-10 transition-all ease-in duration-300">
-                      {groupedCategory[category]
-                        .filter((post) => {
-                          console.log("Expanded Category:", expandedCategory);
-                          return (
-                            expandedCategory === "" ||
-                            expandedCategory === "View all" ||
-                            post.cName === expandedCategory
-                          );
-                        })
-                        .map((post) => (
-                          <li
-                            key={post.pid}
-                            className={`${post.border} flex flex-col justify-between w-64 h-60 my-2 p-5 rounded-md bg-blue-100 shadow m-5`}
-                          >
-                            <div className="overflow-y-hidden">
-                              <p className="block pb-3 font-sans text-xl text-black">
-                                {post.authorName}
-                              </p>
-                              <span className="block pb-3 font-sans text-xl text-black">
-                                {post.title.length > 20
-                                  ? post.title.substring(0, 20) + "..."
-                                  : post.title}
-                                <p className="text-sm my-1 font-semibold">
-                                  {formatTimestamp(post.lastUpdated)}
-                                </p>
-                                <p
-                                  className="text-xs"
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      post.content.length > 200
-                                        ? post.content.substring(0, 200) + "..."
-                                        : post.content,
-                                  }}
-                                />
-                              </span>
-                            </div>
-                            {post.userName === loggedIn ? (
-                              <div className="flex flex-row justify-around w-full space-x-4">
-                                <button
-                                  className="text-xs bg-green-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                                  name={post.pid}
-                                  onClick={editClickHandler}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                                  name={post.pid}
-                                  onClick={showClickHandler}
-                                >
-                                  Open
-                                </button>
-                                <button
-                                  className="text-xs bg-red-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                                  name={post.pid}
-                                  onClick={deleteClickHandler}
-                                >
-                                  Delete
-                                </button>
-                                <button
-                                  className={`text-xs border-0 rounded-md w-28 h-9 px-2 cursor-pointer ${
-                                    favorites[post.pid]
-                                      ? "bg-yellow-700 text-white"
-                                      : "bg-yellow-200 text-black"
-                                  }`}
-                                  name={post.pid}
-                                  onClick={favClickHandler}
-                                >
-                                  Favorite
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex flex-row justify-around w-full space-x-4">
-                                <button
-                                  className="text-xs bg-blue-600 text-white border-0 rounded-md w-28 h-9 px-2 cursor-pointer"
-                                  name={post.pid}
-                                  onClick={showClickHandler}
-                                >
-                                  Open
-                                </button>
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            )}
+                        )}
+                      </div>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-center text-xl">
+                    No posts available for this category.
+                  </p>
+                )
+              ) : null}
+            </ul>
           </div>
         ) : (
-          <div>Loading..</div>
+          <div className="text-center text-xl">Loading...</div>
         )}
       </div>
     </Main>
