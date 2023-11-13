@@ -214,7 +214,7 @@ function Dms() {
                   <div className="flex flex-col md:flex-row flex-wrap items-center justify-between md:space-x-10">
                     <div className="flex flex-row items-center space-x-2">
                       <label className="w-32 text-black font-semibold">
-                        Sort by category:
+                        Category:
                       </label>
                       <select
                         className="md:ml-5 ml-0"
