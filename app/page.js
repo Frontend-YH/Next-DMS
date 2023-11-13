@@ -24,6 +24,7 @@ function Dms() {
     }
   }, []);
 
+
   useEffect(() => {
     const getPost = async () => {
       const res = await fetch("/api/posts");
@@ -192,7 +193,9 @@ function Dms() {
     if (expandedCategory === "View all" || !groupedCategory[expandedCategory]) {
       return docs;
     }
+  
     return groupedCategory[expandedCategory];
+    
   }, [expandedCategory, groupedCategory, docs]);
   // ##########################################################################################
 
@@ -207,7 +210,7 @@ function Dms() {
             <div className="flex flex-col md:flex-row justify-center items-center mt-5 space-y-2 md:space-y-0 md:space-x-10">
               {loggedIn && (
                 <>
-                  <Search posts={posts} setPosts={setPosts} />
+                  <Search setExpandedCategory={setExpandedCategory} posts={posts} setPosts={setPosts} />
                   <div className="flex flex-col md:flex-row flex-wrap items-center justify-between md:space-x-10">
                     <div className="flex flex-row items-center space-x-2">
                       <label className="w-32 text-black font-semibold">
@@ -216,6 +219,7 @@ function Dms() {
                       <select
                         className="md:ml-5 ml-0"
                         onChange={(e) => setExpandedCategory(e.target.value)}
+                        value={expandedCategory}
                       >
                         <option key="" value="View all">
                           View all

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 export default function Search(props) {
  
   const [posts, setPosts] = useState([]);
+  const [tempPosts, setTempPosts] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
@@ -12,13 +13,13 @@ export default function Search(props) {
       const posts = await res.json();
 
       setPosts(posts);
+      setTempPosts(posts);
     };
     getPost();
   }, []);
 
     let searchResults = [];
     const searchFieldChange = (e) => {
-
 
     if (isChecked) {
 
@@ -46,8 +47,6 @@ export default function Search(props) {
 
     }
 
-
-
           props.setPosts(searchResults);
         
         };
@@ -56,12 +55,21 @@ export default function Search(props) {
     setIsChecked(e.target.checked);
   };
 
+  const handleSearchFocus = (e) => {
+    // Automatically switch to ALL CATEGORIES when searching
+    
+    props.setExpandedCategory("View all");
+    props.setPosts(posts);
+  };
+
+  //(e) => props.setExpandedCategory("View all")
+
   return (
     <div className="flex bg-white text-black">
       <div>
       <label htmlFor="search">Search: </label>
-      <input type="text" id="search" className="rounded p-1 text-md w-38 border" onChange={searchFieldChange}/>
-      <label htmlFor="search" className="m-2">Include texts: </label>
+      <input type="text" id="search" className="rounded p-1 text-md w-38 border" onFocus={handleSearchFocus} onChange={searchFieldChange}/>
+      <label htmlFor="search" className="m-2">Include body: </label>
         <input
           type="checkbox"
           checked={isChecked}
