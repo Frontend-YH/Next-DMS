@@ -11,11 +11,23 @@ function Dms() {
   const [favorites, setFavorites] = useState({});
   const [expandedCategory, setExpandedCategory] = useState("View all");
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const userId =
     typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
 
   const router = useRouter();
+
+  useEffect(() => {
+    const checkIfLoggedIn = () => {
+      if (loggedIn) {
+        setIsLoggedIn(true)
+      } else {
+        setIsLoggedIn(false)
+      }
+    };
+    checkIfLoggedIn();
+  },[])
 
   useEffect(() => {
     const getPost = async () => {
@@ -192,24 +204,26 @@ function Dms() {
   // ##########################################################################################
 
   return (
-    <Main>
+    <Main >
       <div
+        
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
       >
         {posts ? (
-          <div>
-            <div className="flex flex-col-reverse md:flex-row justify-center items-center md:justify-between md:mr-32 mr-2 md:ml-32 ml-2 mt-5">
-              {loggedIn && (
+          <div >
+            <div  className="flex flex-col-reverse md:flex-row justify-center items-center md:justify-between md:mr-32 mr-2 md:ml-32 ml-2 mt-5">
+              {isLoggedIn ? (
+                
                 <>
-                  <div className="md:mb-0 mb-0 mt-6 md:mt-0">
+                  <div  className="md:mb-0 mb-0 mt-6 md:mt-0" >
                     <label className="w-32 text-black font-semibold">
                       Sort by category:
                     </label>
                     <select
                       className="md:ml-5 ml-0"
                       onChange={(e) => setExpandedCategory(e.target.value)}
-                    >
+                      >
                       <option key="" value="View all">
                         View all
                       </option>
@@ -222,11 +236,12 @@ function Dms() {
                   </div>
                   <DocumentButtons />
                 </>
-              )}
+                      ):null}
+              
             </div>
 
             <ul className="flex flex-wrap justify-center list-none md:mt-10 mt-5 transition-all ease-in duration-300">
-              {loggedIn ? (
+              {isLoggedIn ? (
                 filteredDocs.length > 0 ? (
                   filteredDocs.map((post) => (
                     <li
@@ -263,7 +278,7 @@ function Dms() {
                           )}
                         </>
                       )}
-                      <div className="overflow-hidden h-40 mb-4 text-left">
+                      <div className="overflow-hidden h-40 mb-4 text-left" >
                         <h2 className="font-sans text-md text-black font-semibold mt-8 truncate">
                           {post.title}
                         </h2>
@@ -277,7 +292,7 @@ function Dms() {
                           }}
                         ></p>
                       </div>
-                      <div className="mb-4 text-left">
+                      <div className="mb-4 text-left" >
                         <span className="text-xs font-medium text-gray-600">
                           {post.authorName}
                         </span>
@@ -314,7 +329,7 @@ function Dms() {
             </ul>
           </div>
         ) : (
-          <div className="text-center text-xl">Loading...</div>
+          <div  className="text-center text-xl">Loading...</div>
         )}
       </div>
     </Main>
