@@ -12,6 +12,9 @@ function Dms() {
   const [expandedCategory, setExpandedCategory] = useState("View all");
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
 
+  const userId =
+    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
+
   const router = useRouter();
 
   useEffect(() => {
@@ -26,19 +29,31 @@ function Dms() {
 
   useEffect(() => {
     const getFavorites = async () => {
-      const res = await fetch("/api/favorites");
-      const favorites = await res.json();
+      const res = await fetch("/api/getfavorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+      const allFavorites = await res.json();
+
+      const userFavorites = allFavorites.filter(
+        (fav) => String(fav.authorId) === String(userId)
+      );
 
       const favoritesMap = {};
-      favorites.forEach((fav) => {
+      userFavorites.forEach((fav) => {
         favoritesMap[fav.postId] = true;
       });
 
       setFavorites(favoritesMap);
     };
 
-    getFavorites();
-  }, []);
+    if (userId) {
+      getFavorites();
+    }
+  }, [userId]);
 
   const handleShow = (postId) => {
     router.push("/show-post/?pid=" + postId);
@@ -103,10 +118,12 @@ function Dms() {
     });
 
     if (res.ok) {
-      setFavorites((prevFavorites) => ({
-        ...prevFavorites,
-        [postId]: !prevFavorites[postId],
-      }));
+      res.json().then((data) => {
+        setFavorites((prevFavorites) => ({
+          ...prevFavorites,
+          [postId]: data.favorite,
+        }));
+      });
     }
   };
 
@@ -125,10 +142,6 @@ function Dms() {
   //const loggedIn = localStorage.getItem("user");
   const loggedIn =
     typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
-
-  //const userId = localStorage.getItem("userId");
-  const userId =
-    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
 
   if (loggedIn === null) {
     docs = reversedDocs.filter((post) => {
@@ -220,19 +233,19 @@ function Dms() {
                       key={post.pid}
                       className={`${post.border} border-gray-200 border-2 relative flex flex-col justify-between w-2/5 md:w-56 h-auto my-2 p-3 rounded bg-white shadow-sm m-2`}
                     >
+                      <button
+                        className={`absolute top-0 left-0 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer ${
+                          favorites[post.pid]
+                            ? "bg-yellow-600 hover:bg-gray-500"
+                            : "bg-gray-500 hover:bg-yellow-600"
+                        }`}
+                        name={post.pid}
+                        onClick={favClickHandler}
+                      >
+                        ★
+                      </button>
                       {post.userName === loggedIn && (
                         <>
-                          <button
-                            className={`absolute top-0 left-0 m-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer ${
-                              favorites[post.pid]
-                                ? "bg-yellow-600 hover:bg-gray-500"
-                                : "bg-gray-500 hover:bg-yellow-600"
-                            }`}
-                            name={post.pid}
-                            onClick={favClickHandler}
-                          >
-                            ★
-                          </button>
                           <button
                             className="absolute top-0 right-0 m-2 text-xs bg-gray-600 hover:bg-gray-900 text-white border-0 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
                             name={post.pid}
