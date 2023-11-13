@@ -263,17 +263,14 @@ function Dms() {
                           )}
                         </>
                       )}
-                      <div className="overflow-hidden h-40 mb-4 text-left">
+                      <div className="h-48 mb-4 text-left">
                         <h2 className="font-sans text-md text-black font-semibold mt-8 truncate">
                           {post.title}
                         </h2>
                         <p
-                          className="text-xs text-gray-700 truncate"
+                          className="text-xs text-gray-700 overflow-hidden h-36"
                           dangerouslySetInnerHTML={{
-                            __html:
-                              post.content.length > 200
-                                ? post.content.substring(0, 200) + "..."
-                                : post.content,
+                            __html: post.content,
                           }}
                         ></p>
                       </div>
