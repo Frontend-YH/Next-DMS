@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import DocumentButtons from "@/components/DocumentButtons";
 import React, { useMemo } from "react";
 
-
 function Dms() {
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState({});
@@ -15,15 +14,15 @@ function Dms() {
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
   const [userId, setUserId] = useState(null);
   const [loggedIn, setLoggedIn] = useState(null);
-  
+
   const router = useRouter();
-  
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        setUserId(localStorage.getItem("userId"));
-        setLoggedIn(localStorage.getItem("user"));
-      }
-    }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+      setLoggedIn(localStorage.getItem("user"));
+    }
+  }, []);
 
   useEffect(() => {
     const getPost = async () => {
@@ -148,7 +147,6 @@ function Dms() {
   let docs = [];
 
   //const loggedIn = localStorage.getItem("user");
-  
 
   if (loggedIn === null) {
     docs = reversedDocs.filter((post) => {
@@ -200,36 +198,39 @@ function Dms() {
 
   return (
     <Main>
-      
       <div
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
       >
         {posts ? (
           <div>
-            <div className="flex flex-col-reverse md:flex-row justify-center items-center md:justify-between md:mr-32 mr-2 md:ml-32 ml-2 mt-5">
+            <div className="flex flex-col md:flex-row justify-center items-center mt-5 space-y-2 md:space-y-0 md:space-x-10">
               {loggedIn && (
                 <>
-                  <div className="md:mb-0 mb-0 mt-6 md:mt-0">
-                    <label className="w-32 text-black font-semibold">
-                      Sort by category:
-                    </label>
-                    <select
-                      className="md:ml-5 ml-0"
-                      onChange={(e) => setExpandedCategory(e.target.value)}
-                    >
-                      <option key="" value="View all">
-                        View all
-                      </option>
-                      {Object.keys(groupedCategory).map((c) => (
-                        <option key={c} value={c}>
-                          {c}
+                  <Search posts={posts} setPosts={setPosts} />
+                  <div className="flex flex-col md:flex-row flex-wrap items-center justify-between md:space-x-10">
+                    <div className="flex flex-row items-center space-x-2">
+                      <label className="w-32 text-black font-semibold">
+                        Sort by category:
+                      </label>
+                      <select
+                        className="md:ml-5 ml-0"
+                        onChange={(e) => setExpandedCategory(e.target.value)}
+                      >
+                        <option key="" value="View all">
+                          View all
                         </option>
-                      ))}
-                    </select>
+                        {Object.keys(groupedCategory).map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="mt-4 md:mt-0">
+                      <DocumentButtons />
+                    </div>
                   </div>
-                  <Search posts={posts} setPosts={setPosts}/>
-                  <DocumentButtons />
                 </>
               )}
             </div>
@@ -323,9 +324,7 @@ function Dms() {
           <div className="text-center text-xl">Loading...</div>
         )}
       </div>
-      
     </Main>
-    
   );
 }
 
