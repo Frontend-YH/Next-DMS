@@ -11,11 +11,17 @@ function Dms() {
   const [favorites, setFavorites] = useState({});
   const [expandedCategory, setExpandedCategory] = useState("View all");
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
-
-  const userId =
-    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
-
+  const [userId, setUserId] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(null);
+  
   const router = useRouter();
+  
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        setUserId(localStorage.getItem("userId"));
+        setLoggedIn(localStorage.getItem("user"));
+      }
+    }, []);
 
   useEffect(() => {
     const getPost = async () => {
@@ -140,8 +146,7 @@ function Dms() {
   let docs = [];
 
   //const loggedIn = localStorage.getItem("user");
-  const loggedIn =
-    typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
+  
 
   if (loggedIn === null) {
     docs = reversedDocs.filter((post) => {
