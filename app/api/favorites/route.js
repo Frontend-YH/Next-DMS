@@ -17,21 +17,16 @@ export async function POST(req, res) {
       values: [postId, authorId],
     });
 
-    return NextResponse.json({ message: "Favorite removed" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Favorite removed", favorite: false },
+      { status: 200 }
+    );
   } else {
     const result = await query({
       query: "INSERT INTO favorites (postId, authorId) VALUES (?, ?)",
       values: [postId, authorId],
     });
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json({ ...result, favorite: true }, { status: 200 });
   }
-}
-
-export async function GET(req, res) {
-  const result = await query({
-    query: "SELECT * FROM favorites",
-  });
-
-  return NextResponse.json(result, { status: 200 });
 }
