@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import Main from "@/components/Main";
+import Search from "@/components/Search";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import DocumentButtons from "@/components/DocumentButtons";
 import React, { useMemo } from "react";
+
 
 function Dms() {
   const [posts, setPosts] = useState([]);
@@ -198,6 +200,7 @@ function Dms() {
 
   return (
     <Main>
+      
       <div
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
@@ -225,6 +228,7 @@ function Dms() {
                       ))}
                     </select>
                   </div>
+                  <Search posts={posts} setPosts={setPosts}/>
                   <DocumentButtons />
                 </>
               )}
@@ -322,7 +326,9 @@ function Dms() {
           <div className="text-center text-xl">Loading...</div>
         )}
       </div>
+      
     </Main>
+    
   );
 }
 
