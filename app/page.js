@@ -1,21 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
 import Main from "@/components/Main";
+import Search from "@/components/Search";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import DocumentButtons from "@/components/DocumentButtons";
 import React, { useMemo } from "react";
+
 
 function Dms() {
   const [posts, setPosts] = useState([]);
   const [favorites, setFavorites] = useState({});
   const [expandedCategory, setExpandedCategory] = useState("View all");
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
-
-  const userId =
-    typeof localStorage !== "undefined" ? localStorage.getItem("userId") : null;
-
+  const [userId, setUserId] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(null);
+  
   const router = useRouter();
+  
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        setUserId(localStorage.getItem("userId"));
+        setLoggedIn(localStorage.getItem("user"));
+      }
+    }, []);
 
   useEffect(() => {
     const getPost = async () => {
@@ -140,8 +148,7 @@ function Dms() {
   let docs = [];
 
   //const loggedIn = localStorage.getItem("user");
-  const loggedIn =
-    typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
+  
 
   if (loggedIn === null) {
     docs = reversedDocs.filter((post) => {
@@ -193,6 +200,7 @@ function Dms() {
 
   return (
     <Main>
+      
       <div
         className="bg-white p-0 m-0"
         style={{ width: "100vw", textAlign: "center" }}
@@ -220,6 +228,7 @@ function Dms() {
                       ))}
                     </select>
                   </div>
+                  <Search posts={posts} setPosts={setPosts}/>
                   <DocumentButtons />
                 </>
               )}
@@ -314,7 +323,9 @@ function Dms() {
           <div className="text-center text-xl">Loading...</div>
         )}
       </div>
+      
     </Main>
+    
   );
 }
 
