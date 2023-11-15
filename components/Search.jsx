@@ -65,18 +65,21 @@ export default function Search(props) {
   //(e) => props.setExpandedCategory("View all")
 
   return (
-    <div className="flex bg-white text-black">
-      <div>
+      <div className="flex flex-col mt-5 mb-2 md:mt-8">
+        <div>
+
       <label htmlFor="search">Search: </label>
       <input type="text" id="search" className="rounded p-1 text-md w-38 border" onFocus={handleSearchFocus} onChange={searchFieldChange}/>
-      <label htmlFor="search" className="m-2">Include body: </label>
+        </div>
+      <div className="flex justify-end items-center mt-1">
+        <label htmlFor="search" className="text-sm">Include Text Content: </label>
         <input
           type="checkbox"
           checked={isChecked}
           onChange={handleCheckboxChange}
-          className="mr-2 text-center rounded-l m-2"
+          className="rounded-l ml-2"
         />
       </div>
-    </div>
-  );
+      </div>
+      );
 }

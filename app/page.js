@@ -207,7 +207,7 @@ function Dms() {
       >
         {posts ? (
           <div>
-            <div className="flex flex-col md:flex-row justify-center items-center mt-5 space-y-2 md:space-y-0 md:space-x-10">
+            <div className="flex flex-col md:flex-row justify-center items-center mt-0 space-y-2 md:space-y-0 md:space-x-10">
               {loggedIn && (
                 <>
                   <Search
