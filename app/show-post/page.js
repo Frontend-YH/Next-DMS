@@ -1,9 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import ReactQuill from "react-quill";
+//import ReactQuill from "react-quill";
 import "quill/dist/quill.bubble.css";
 import { checkUser } from "../utils/auth";
+import dynamic from "next/dynamic";
+
+// Dynamic import with SSR set to false, because QUILL uses document
+const ReactQuill = dynamic(
+  () => {
+    return import("react-quill");
+  },
+  { ssr: false }
+);
+// #####################################################################
 
 export default function ShowPost() {
   const [content, setContent] = useState("");
