@@ -106,7 +106,7 @@ export default function editPost() {
     });
 
     if (res.ok) {
-      window.location.reload();
+      router.reload();
     }
   };
 
@@ -251,7 +251,7 @@ export default function editPost() {
                         </button>
                         <button
                           className="text-xs bg-red-600 hover:bg-red-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
-                          onClick={handleDelete}
+                          onClick={() => handleDelete(postId)}
                         >
                           Delete
                         </button>

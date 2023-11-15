@@ -14,6 +14,7 @@ function Dms() {
   const groupedCategory = useMemo(() => groupByCategory(posts), [posts]);
   const [userId, setUserId] = useState(null);
   const [loggedIn, setLoggedIn] = useState(null);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const router = useRouter();
 
@@ -32,7 +33,7 @@ function Dms() {
       setPosts(posts);
     };
     getPost();
-  }, []);
+  }, [isDeleted]);
 
   useEffect(() => {
     const getFavorites = async () => {
@@ -77,7 +78,8 @@ function Dms() {
     });
 
     if (res.ok) {
-      window.location.reload();
+      setPosts((prevPosts) => prevPosts.filter((post) => post.pid !== postId));
+      setIsDeleted(true);
     }
   };
   //Sort by category
