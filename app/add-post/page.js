@@ -1,9 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import QEditor from "@/components/QEditor";
-import ReactQuill from "react-quill";
+//import QEditor from "@/components/QEditor";
+//import ReactQuill from "react-quill";
 import "quill/dist/quill.bubble.css";
+
+import dynamic from "next/dynamic";
+
+// Dynamic import with SSR set to false, because QUILL uses document
+const QEditor = dynamic(
+  () => {
+    return import("../../components/QEditor");
+  },
+  { ssr: false }
+);
+const ReactQuill = dynamic(
+  () => {
+    return import("react-quill");
+  },
+  { ssr: false }
+);
+// #####################################################################
 
 export default function addPost() {
   const [title, setTitle] = useState("");
@@ -18,6 +35,8 @@ export default function addPost() {
 
 
   const router = useRouter();
+
+  
 
   useEffect(() => {
     // Perform localStorage action

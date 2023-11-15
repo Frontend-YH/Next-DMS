@@ -1,10 +1,27 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import QEditor from "@/components/QEditor";
-import ReactQuill from "react-quill";
+//import QEditor from "@/components/QEditor";
+//import ReactQuill from "react-quill";
 import "quill/dist/quill.bubble.css";
 import ListDocumentBtn from "@/components/ListDocumentBtn";
+
+import dynamic from "next/dynamic";
+
+// Dynamic import with SSR set to false, because QUILL uses document
+const QEditor = dynamic(
+  () => {
+    return import("../../components/QEditor");
+  },
+  { ssr: false }
+);
+const ReactQuill = dynamic(
+  () => {
+    return import("react-quill");
+  },
+  { ssr: false }
+);
+// #####################################################################
 
 export default function editPost() {
   const [title, setTitle] = useState("");
