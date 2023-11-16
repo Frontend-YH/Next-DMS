@@ -73,13 +73,17 @@ function Dms() {
 
   // FOR DELETE
   const handleDelete = async (postId) => {
-    const res = await fetch("/api/posts/" + postId, {
-      method: "DELETE",
-    });
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      const res = await fetch("/api/posts/" + postId, {
+        method: "DELETE",
+      });
 
-    if (res.ok) {
-      setPosts((prevPosts) => prevPosts.filter((post) => post.pid !== postId));
-      setIsDeleted(true);
+      if (res.ok) {
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post.pid !== postId)
+        );
+        setIsDeleted(true);
+      }
     }
   };
   //Sort by category

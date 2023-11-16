@@ -100,13 +100,20 @@ export default function editPost() {
     setPreview(!preview);
   };
 
-  const handleDelete = async (postId) => {
-    const res = await fetch("/api/posts/" + postId, {
-      method: "DELETE",
-    });
+  const handleDelete = async (postId, event) => {
+    event.preventDefault();
+    const confirmResult = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
 
-    if (res.ok) {
-      router.reload();
+    if (confirmResult) {
+      const res = await fetch("/api/posts/" + postId, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        router.push("/");
+      }
     }
   };
 
@@ -251,7 +258,7 @@ export default function editPost() {
                         </button>
                         <button
                           className="text-xs bg-red-600 hover:bg-red-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
-                          onClick={() => handleDelete(postId)}
+                          onClick={(event) => handleDelete(postId, event)}
                         >
                           Delete
                         </button>
