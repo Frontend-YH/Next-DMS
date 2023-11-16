@@ -83,7 +83,6 @@ export default function editPost() {
 
   const handlePrivate = (event) => {
     setIsPublic(event.target.checked ? 0 : 1);
-    console.log(isPublic);
   };
 
   // ############# Category Handling #################################################
@@ -207,26 +206,15 @@ export default function editPost() {
                       <div className="flex flex-col md:flex-row justify-around md:justify-end w-full items-center space-x-2 md:space-x-4">
                         <div className="flex flex-row mb-4 md:mb-0 items-center">
                           <div className="flex items-center">
-                            {isPublic === 0 ? (
-                              <input
-                                className="mr-2 text-center rounded-lg"
-                                type="checkbox"
-                                id="option1"
-                                name="option"
-                                value="private"
-                                checked="true"
-                                onChange={handlePrivate}
-                              />
-                            ) : (
-                              <input
-                                className="mr-2 text-center rounded-lg"
-                                type="checkbox"
-                                id="option1"
-                                name="option"
-                                value="private"
-                                onChange={handlePrivate}
-                              />
-                            )}
+                            <input
+                              className="mr-2 text-center rounded-lg"
+                              type="checkbox"
+                              id="option1"
+                              name="option"
+                              value="private"
+                              checked={isPublic === 0}
+                              onChange={handlePrivate}
+                            />
 
                             <label htmlFor="option1">Make private </label>
                             <button
