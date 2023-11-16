@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 //import QEditor from "@/components/QEditor";
 //import ReactQuill from "react-quill";
@@ -36,8 +36,6 @@ export default function editPost() {
   const [categories, setCategories] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const selectRef = useRef(null);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -58,7 +56,6 @@ export default function editPost() {
       if (res.ok) {
         setTitle(data[0].title);
         setContent(data[0].content);
-        //console.log(data[0].categoryId);
         setCategoryId(data[0].categoryId);
         setIsPublic(data[0].isPublic);
       }
@@ -88,7 +85,6 @@ export default function editPost() {
   // ############# Category Handling #################################################
   const handleCategory = (event) => {
     setCategoryId(event.target.value);
-    //console.log(categoryId);
   };
   // ####################################################################################
 
@@ -125,8 +121,6 @@ export default function editPost() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let postIdx = 15;
-
     const currentTime = new Date();
     const timeStamp = currentTime.toISOString().slice(0, 19).replace("T", " ");
     const lastUpdated = timeStamp;
@@ -152,8 +146,6 @@ export default function editPost() {
       router.push("/");
     }
   };
-
-  let selected = "";
 
   return (
     <div className="bg-white p-0 m-0">
