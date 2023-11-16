@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 //import ReactQuill from "react-quill";
 import "quill/dist/quill.bubble.css";
 import ListDocumentBtn from "@/components/ListDocumentBtn";
+import { checkUser } from "../utils/auth";
 
 import dynamic from "next/dynamic";
 
@@ -33,6 +34,7 @@ export default function editPost() {
   const [lastUpdated, setLastUpdated] = useState("");
   const [categoryId, setCategoryId] = useState(0);
   const [categories, setCategories] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const selectRef = useRef(null);
 
@@ -100,6 +102,10 @@ export default function editPost() {
     setPreview(!preview);
   };
 
+  useEffect(() => {
+    setIsLoggedIn(checkUser());
+  }, []);
+
   const handleDelete = async (postId, event) => {
     event.preventDefault();
     const confirmResult = window.confirm(
@@ -152,132 +158,140 @@ export default function editPost() {
 
   return (
     <div className="bg-white p-0 m-0">
-      {post ? (
-        <div>
-          <form onSubmit={handleSubmit}>
-            <ul className="flex flex-col items-center list-none">
-              <li className="w-full h-auto my-2 px-5 py-10 rounded text-center shadow text-black">
-                {preview ? (
-                  <div>
-                    <label className="block font-sans text-2xl text-center text-black">
-                      {title}
-                    </label>
-                    <ReactQuill
-                      theme="bubble"
-                      value={content || ""}
-                      readOnly={true}
-                      className="text-black"
-                    />
-                    <div className="flex flex-row justify-around w-full">
-                      <button
-                        className="text-sm bg-gray-600 text-white border-0 rounded-md w-32 h-9 px-2.5 cursor-pointer"
-                        onClick={handlePreview}
-                      >
-                        Close Preview
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <label className="block font-sans text-2xl pb-4 text-left text-black">
-                      Document Title
-                    </label>
-                    <input
-                      className="block w-80 h-9 font-sans text-sm p-5 border border-gray-400 rounded-md bg-white text-black"
-                      defaultValue={title}
-                      type="text"
-                      onChange={titleEventHandler}
-                    />
-                    <div className="flex justify-between items-center">
-                      <label className="block font-sans text-2xl py-4 text-left text-black">
-                        Text Content
+      {isLoggedIn ? (
+        post ? (
+          <div>
+            <form onSubmit={handleSubmit}>
+              <ul className="flex flex-col items-center list-none">
+                <li className="w-full h-auto my-2 px-5 py-10 rounded text-center shadow text-black">
+                  {preview ? (
+                    <div>
+                      <label className="block font-sans text-2xl text-center text-black">
+                        {title}
                       </label>
-                      <ListDocumentBtn />
-                    </div>
-
-                    <QEditor onChange={contentEventHandler} value={content} />
-
-                    <div className="flex flex-col md:flex-row justify-around md:justify-end w-full items-center space-x-2 md:space-x-4">
-                      <div className="flex flex-row mb-4 md:mb-0 items-center">
-                        <div className="flex items-center">
-                          {isPublic === 0 ? (
-                            <input
-                              className="mr-2 text-center rounded-lg"
-                              type="checkbox"
-                              id="option1"
-                              name="option"
-                              value="private"
-                              checked="true"
-                              onChange={handlePrivate}
-                            />
-                          ) : (
-                            <input
-                              className="mr-2 text-center rounded-lg"
-                              type="checkbox"
-                              id="option1"
-                              name="option"
-                              value="private"
-                              onChange={handlePrivate}
-                            />
-                          )}
-
-                          <label htmlFor="option1">Make private </label>
-                          <button
-                            className="ml-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center bg-red-500 text-white"
-                            disabled
-                          >
-                            P
-                          </button>
-                        </div>
-                        <div className="flex items-center ml-5">
-                          <select
-                            value={categoryId}
-                            className="bg-white border-black"
-                            onChange={handleCategory}
-                          >
-                            <option value="" disabled>
-                              Choose your category
-                            </option>
-                            {categories.map((cat) => (
-                              <option
-                                key={cat.categoryId}
-                                value={cat.categoryId}
-                              >
-                                {cat.cName}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="flex flex-row md:flex-row items-center md:space-x-4 space-x-2 mt-4 md:mt-0">
+                      <ReactQuill
+                        theme="bubble"
+                        value={content || ""}
+                        readOnly={true}
+                        className="text-black"
+                      />
+                      <div className="flex flex-row justify-around w-full">
                         <button
-                          className="text-xs bg-blue-600 hover:bg-blue-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
+                          className="text-sm bg-gray-600 text-white border-0 rounded-md w-32 h-9 px-2.5 cursor-pointer"
                           onClick={handlePreview}
                         >
-                          Preview
-                        </button>
-                        <button
-                          className="text-xs bg-red-600 hover:bg-red-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
-                          onClick={(event) => handleDelete(postId, event)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          className="text-xs bg-green-600 hover:bg-green-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
-                          type="submit"
-                        >
-                          Save changes
+                          Close Preview
                         </button>
                       </div>
                     </div>
-                  </div>
-                )}
-              </li>
-            </ul>
-          </form>
-        </div>
+                  ) : (
+                    <div>
+                      <label className="block font-sans text-2xl pb-4 text-left text-black">
+                        Document Title
+                      </label>
+                      <input
+                        className="block w-80 h-9 font-sans text-sm p-5 border border-gray-400 rounded-md bg-white text-black"
+                        defaultValue={title}
+                        type="text"
+                        onChange={titleEventHandler}
+                      />
+                      <div className="flex justify-between items-center">
+                        <label className="block font-sans text-2xl py-4 text-left text-black">
+                          Text Content
+                        </label>
+                        <ListDocumentBtn />
+                      </div>
+
+                      <QEditor onChange={contentEventHandler} value={content} />
+
+                      <div className="flex flex-col md:flex-row justify-around md:justify-end w-full items-center space-x-2 md:space-x-4">
+                        <div className="flex flex-row mb-4 md:mb-0 items-center">
+                          <div className="flex items-center">
+                            {isPublic === 0 ? (
+                              <input
+                                className="mr-2 text-center rounded-lg"
+                                type="checkbox"
+                                id="option1"
+                                name="option"
+                                value="private"
+                                checked="true"
+                                onChange={handlePrivate}
+                              />
+                            ) : (
+                              <input
+                                className="mr-2 text-center rounded-lg"
+                                type="checkbox"
+                                id="option1"
+                                name="option"
+                                value="private"
+                                onChange={handlePrivate}
+                              />
+                            )}
+
+                            <label htmlFor="option1">Make private </label>
+                            <button
+                              className="ml-2 text-xl border-0 rounded-full w-6 h-6 flex items-center justify-center bg-red-500 text-white"
+                              disabled
+                            >
+                              P
+                            </button>
+                          </div>
+                          <div className="flex items-center ml-5">
+                            <select
+                              value={categoryId}
+                              className="bg-white border-black"
+                              onChange={handleCategory}
+                            >
+                              <option value="" disabled>
+                                Choose your category
+                              </option>
+                              {categories.map((cat) => (
+                                <option
+                                  key={cat.categoryId}
+                                  value={cat.categoryId}
+                                >
+                                  {cat.cName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex flex-row md:flex-row items-center md:space-x-4 space-x-2 mt-4 md:mt-0">
+                          <button
+                            className="text-xs bg-blue-600 hover:bg-blue-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
+                            onClick={handlePreview}
+                          >
+                            Preview
+                          </button>
+                          <button
+                            className="text-xs bg-red-600 hover:bg-red-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
+                            onClick={(event) => handleDelete(postId, event)}
+                          >
+                            Delete
+                          </button>
+                          <button
+                            className="text-xs bg-green-600 hover:bg-green-900 text-white border-0 rounded w-28 h-9 px-2 cursor-pointer"
+                            type="submit"
+                          >
+                            Save changes
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              </ul>
+            </form>
+          </div>
+        ) : (
+          <div className="text-red-500">
+            {post
+              ? "You do not have permission to view this post."
+              : "Loading post..."}
+          </div>
+        )
       ) : (
-        <div>Loading...</div>
+        <div className="text-red-500">Please log in to view this post.</div>
       )}
     </div>
   );
