@@ -4,8 +4,9 @@ Next DMS is Document Management System built for educational purposes. We built 
 
 ## Install MySQL Server or use an existing one.
 
-1. Create a database and users.
-2. import Next_DMS.sql in the database.
+1. Create database and user.
+2. Import Next_DMS.sql in the database.
+3. Add atleast one admin user and passsword with authorId 1 in the table authors, for admin and test purposes.
 
 
 ## Installation
