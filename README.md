@@ -52,6 +52,10 @@ to discuss what you would like to change.
 
 ##Sidenotes
 
+## Needed features
+- Security, encrypted logins.
+- Built in account creation or full use of Next-auth.
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
