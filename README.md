@@ -37,7 +37,7 @@ MYSQL_PASSWORD=<YourDatabasePassword>
 
 Start the dev server
 ```bash
-next dev
+npm run dev
 ```
 
 Visit the site:
