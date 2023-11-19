@@ -53,8 +53,8 @@ to discuss what you would like to change.
 ##Sidenotes
 
 ## Needed features
-- Security, encrypted logins.
-- Built in account creation or full use of Next-auth.
+- Security, encrypted logins, blocked api routes without the right credentials.
+- Built in account creation or full use of NextAuth (next-auth.js.org)
 
 ## License
 
